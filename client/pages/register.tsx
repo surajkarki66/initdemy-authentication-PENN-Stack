@@ -17,7 +17,7 @@ const Register: NextPage = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            className="form-control mb-4 p-3"
+            className="form-control mb-4 p-2"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="Enter first name"
@@ -25,7 +25,7 @@ const Register: NextPage = () => {
           />
           <input
             type="text"
-            className="form-control mb-4 p-3"
+            className="form-control mb-4 p-2"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Enter last name"
@@ -33,7 +33,7 @@ const Register: NextPage = () => {
           />
           <input
             type="email"
-            className="form-control mb-4 p-3"
+            className="form-control mb-4 p-2"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter email address"
@@ -41,7 +41,7 @@ const Register: NextPage = () => {
           />
           <input
             type="password"
-            className="form-control mb-4 p-3"
+            className="form-control mb-4 p-2"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter password"
