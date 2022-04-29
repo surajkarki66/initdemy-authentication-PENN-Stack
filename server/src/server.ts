@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import config from "./configs/config";
+import apiErrorHandler from "./errors/apiErrorHandler";
 
 class Server {
   private app: express.Application;
@@ -15,6 +16,9 @@ class Server {
 
   private routes(): void {
     // General routes
+
+    // Error handler route
+    this.app.use(apiErrorHandler);
   }
 
   private middleware(): void {
