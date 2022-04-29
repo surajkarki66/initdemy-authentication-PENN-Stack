@@ -3,8 +3,10 @@ import type { NextPage } from "next";
 const Login: NextPage = () => {
   return (
     <>
-      <h1 className="jumbotron text-center bg-primary square">Login</h1>
-      <p>Login page...</p>
+      <div className="jumbotron text-center bg-primary square">
+        <h1 style={{ color: "white" }}>Login</h1>
+        <p className="lead">Lets login to learn something!</p>
+      </div>
     </>
   );
 };

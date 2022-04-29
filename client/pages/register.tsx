@@ -12,7 +12,10 @@ const Register: NextPage = () => {
   };
   return (
     <>
-      <h1 className="jumbotron text-center bg-primary square">Register</h1>
+      <div className="jumbotron text-center bg-primary square">
+        <h1 style={{ color: "white" }}>Register</h1>
+        <p className="lead">Lets get registered to our platform!</p>
+      </div>
       <div className="container col-md-4 offset-md-4 pb-5">
         <form onSubmit={handleSubmit}>
           <input
