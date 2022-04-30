@@ -4,6 +4,7 @@ import cors from "cors";
 
 import config from "./configs/config";
 import apiErrorHandler from "./errors/apiErrorHandler";
+import UserRoutes from "./routes/user.route";
 
 class Server {
   private app: express.Application;
@@ -16,6 +17,7 @@ class Server {
 
   private routes(): void {
     // General routes
+    this.app.use("/api/users", new UserRoutes().router);
 
     // Error handler route
     this.app.use(apiErrorHandler);
