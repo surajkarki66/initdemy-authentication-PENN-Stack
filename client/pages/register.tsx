@@ -1,14 +1,23 @@
 import { useState, SyntheticEvent } from "react";
 import type { NextPage } from "next";
 
+import Axios from "../axios-url";
+
 const Register: NextPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: SyntheticEvent) => {
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    const { data } = await Axios.post(`http://localhost:5000`, {
+      firstName,
+      lastName,
+      email,
+      password,
+    });
+    console.log("REGISTERED RESPONSE", data);
   };
   return (
     <>
