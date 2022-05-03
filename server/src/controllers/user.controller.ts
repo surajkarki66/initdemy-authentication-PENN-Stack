@@ -4,6 +4,8 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import ApiError from "../errors/apiError";
 import writeServerResponse from "../helpers/response";
 import errorFormatter from "../helpers/errorFormatters";
+import { createUser, isUserExist } from "../services/user.service";
+import { IRegisterUserInput } from "../interfaces/register-user-input";
 
 const signup: RequestHandler = async (
   req: Request,
@@ -17,10 +19,17 @@ const signup: RequestHandler = async (
       next(ApiError.badRequest(msg[0]));
       return;
     }
-    // Todo: Sign up logic
 
+    const inputUser: IRegisterUserInput = req.body;
+    const { email } = inputUser;
+
+    if (await isUserExist(email)) {
+      next(ApiError.badRequest("Email already taken."));
+      return;
+    }
+    const user = await createUser(inputUser);
     const serverResponse = {
-      result: {},
+      result: user,
       statusCode: 201,
       contentType: "application/json",
     };
