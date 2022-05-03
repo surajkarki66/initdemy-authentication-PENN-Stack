@@ -11,7 +11,7 @@ const Register: NextPage = () => {
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const { data } = await Axios.post(`http://localhost:5000`, {
+    const { data } = await Axios.post(`/api/users/register`, {
       firstName,
       lastName,
       email,
