@@ -26,6 +26,13 @@ export const isUserExist = async (email: string) => {
   }
 };
 
+export const getUserByEmail = async (email: string) => {
+  return await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+};
 export const createUser = async (input: IRegisterUserInput): Promise<IUser> => {
   try {
     const hashedPassword = String(await hashPassword(input.password));
