@@ -1,5 +1,9 @@
 import { useState, SyntheticEvent } from "react";
+import { toast } from "react-toastify";
+import { SyncOutlined } from "@ant-design/icons";
+import Link from "next/link";
 import type { NextPage } from "next";
+import { useRouter } from "next/router";
 
 import Axios from "../axios-url";
 
@@ -8,16 +12,28 @@ const Register: NextPage = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
-    const { data } = await Axios.post(`/api/users/register`, {
-      firstName,
-      lastName,
-      email,
-      password,
-    });
-    console.log("REGISTERED RESPONSE", data);
+    try {
+      setLoading(true);
+      const { data } = await Axios.post(`/users/register`, {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+      if (data) {
+        toast.success("Registration successful. Please login.");
+        setLoading(false);
+        router.push("/login");
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.data.error);
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -61,11 +77,23 @@ const Register: NextPage = () => {
           />
           <br />
           <div className="d-grid gap-2">
-            <button className="btn btn-primary" type="submit">
-              Submit
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={
+                !firstName || !lastName || !email || !password || loading
+              }
+            >
+              {loading ? <SyncOutlined spin /> : "Submit"}
             </button>
           </div>
         </form>
+        <p className="text-center p-3">
+          Already registered?{" "}
+          <Link href="/login">
+            <a>Login</a>
+          </Link>
+        </p>
       </div>
     </>
   );
