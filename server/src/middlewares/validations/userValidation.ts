@@ -40,6 +40,22 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("Password Must Contain an Uppercase"),
       ];
     }
+    case "login": {
+      return [
+        body("email", "Email is required")
+          .isEmail()
+          .notEmpty()
+          .withMessage("Must be a valid email address"),
+        body("password", "Password is required")
+          .notEmpty()
+          .isString()
+          .withMessage("Password must be string"),
+        body("rememberMe")
+          .default(false)
+          .isBoolean()
+          .withMessage("rememberMe must be a boolean"),
+      ];
+    }
 
     default:
       return [];
