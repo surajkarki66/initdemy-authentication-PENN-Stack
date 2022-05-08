@@ -1,4 +1,4 @@
-type UserRole = "SUBSCRIBER" | "INSTRUCTOR" | "ADMIN";
+export type UserRole = "SUBSCRIBER" | "INSTRUCTOR" | "ADMIN";
 
 export interface IUser {
   id: string;
