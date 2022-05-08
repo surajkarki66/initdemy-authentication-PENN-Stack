@@ -16,5 +16,6 @@ export default class UserRoutes {
       userValidation("signup"),
       userController.signup
     );
+    this.router.post("/login", userValidation("login"), userController.login);
   }
 }
