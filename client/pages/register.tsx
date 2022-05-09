@@ -1,4 +1,4 @@
-import { useState, SyntheticEvent } from "react";
+import { useState, SyntheticEvent, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
 import Link from "next/link";
@@ -6,6 +6,7 @@ import type { NextPage } from "next";
 import { useRouter } from "next/router";
 
 import Axios from "../axios-url";
+import { AuthContext } from "../context/AuthContext";
 
 const Register: NextPage = () => {
   const [firstName, setFirstName] = useState("");
@@ -15,10 +16,18 @@ const Register: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const { state, csrfToken } = useContext(AuthContext);
+  const { user } = state;
+
+  useEffect(() => {
+    if (user !== null) router.push("/");
+  }, [router, user]);
+
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
+      Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
       const { data } = await Axios.post(`/users/register`, {
         firstName,
         lastName,

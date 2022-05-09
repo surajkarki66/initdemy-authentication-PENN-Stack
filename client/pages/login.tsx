@@ -1,11 +1,10 @@
-import { useState, SyntheticEvent } from "react";
-import { Checkbox } from "antd";
+import Link from "next/link";
+import { useState, SyntheticEvent, useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import Link from "next/link";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import { AuthContext } from "../context/AuthContext";
 
 import Axios from "../axios-url";
 
@@ -13,25 +12,29 @@ const Login: NextPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+
+  const { state, dispatch, csrfToken } = useContext(AuthContext);
+  const { user } = state;
   const router = useRouter();
 
-  const onChangeCheckBox = (event: CheckboxChangeEvent) => {
-    setRememberMe(event.target.checked);
-  };
+  useEffect(() => {
+    if (user !== null) router.push("/");
+  }, [router, user]);
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       setLoading(true);
+      Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
       const { data } = await Axios.post(`/users/login`, {
         email,
         password,
-        rememberMe,
       });
       if (data) {
-        console.log("LOGIN RESPONSE", data);
+        dispatch({ type: "LOGIN", payload: data.data });
+        window.localStorage.setItem("user", JSON.stringify(data.data));
         setLoading(false);
+        router.push("/");
       }
     } catch (error: any) {
       toast.error(error.response.data.data.error);
@@ -62,13 +65,7 @@ const Login: NextPage = () => {
             placeholder="Enter password"
             required
           />
-          <Checkbox
-            name="rememberMe"
-            onChange={(event) => onChangeCheckBox(event)}
-          >
-            Remember me
-          </Checkbox>
-          <br />
+
           <br />
           <div className="d-grid gap-2">
             <button
