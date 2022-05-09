@@ -17,5 +17,9 @@ export default class UserRoutes {
       userController.signup
     );
     this.router.post("/login", userValidation("login"), userController.login);
+    this.router.get("/logout", userController.logOut);
+    this.router.get("/csrf-token", (req, res) => {
+      return res.json({ csrfToken: req.csrfToken() });
+    });
   }
 }
