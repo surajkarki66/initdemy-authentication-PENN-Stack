@@ -63,7 +63,7 @@ const login: RequestHandler = async (
     }
 
     const loginInput: ILoginUserInput = req.body;
-    const { email, password, rememberMe } = loginInput;
+    const { email, password } = loginInput;
     const user = await getUserByEmail(email);
     if (!user) {
       next(ApiError.badRequest("Email is incorrect."));
@@ -80,7 +80,7 @@ const login: RequestHandler = async (
       const accessToken = signToken(payload, config.jwtExpires);
       const result = {
         status: "success",
-        data: { accessToken: accessToken },
+        data: user,
       };
       const serverResponse = {
         result: result,
@@ -93,10 +93,6 @@ const login: RequestHandler = async (
         sameSite: config.env === "production" ? true : false,
       };
       res.cookie("token", accessToken, options);
-      if (rememberMe) {
-        options = { ...options, maxAge: Number(config.jwtExpires) };
-        res.cookie("rememberMe", accessToken, options);
-      }
       return writeServerResponse(res, serverResponse);
     }
     next(ApiError.badRequest("Incorrect password."));
@@ -106,7 +102,23 @@ const login: RequestHandler = async (
     return;
   }
 };
+
+const logOut: RequestHandler = (
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  res.clearCookie("token");
+  const serverResponse = {
+    result: { message: "Signout success" },
+    statusCode: 200,
+    contentType: "application/json",
+  };
+  return writeServerResponse(res, serverResponse);
+};
+
 export default {
   signup,
   login,
+  logOut,
 };
