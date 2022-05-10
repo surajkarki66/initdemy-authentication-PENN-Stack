@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import Axios from "../axios-url";
 import { AuthContext } from "../context/AuthContext";
 
-const { Item, SubMenu } = Menu;
+const { Item, SubMenu, ItemGroup } = Menu;
 
 const TopNav: NextComponentType = () => {
   const [current, setCurrent] = useState("");
@@ -75,9 +75,16 @@ const TopNav: NextComponentType = () => {
           icon={<CoffeeOutlined />}
           title={user && user.firstName + " " + user.lastName}
         >
-          <Item key="/logout" onClick={logout}>
-            Logout
-          </Item>
+          <ItemGroup>
+            <Item key="/user">
+              <Link href="/user">
+                <a>Dashboard</a>
+              </Link>
+            </Item>
+            <Item key="/logout" onClick={logout}>
+              Logout
+            </Item>
+          </ItemGroup>
         </SubMenu>
       )}
     </Menu>
