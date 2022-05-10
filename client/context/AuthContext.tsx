@@ -1,3 +1,4 @@
+import Cookie from "js-cookie";
 import {
   useReducer,
   createContext,
@@ -22,6 +23,7 @@ type AuthContextType = {
     payload?: any;
   }>;
   csrfToken: string;
+  accessToken: string;
 };
 
 const initialState = {
@@ -45,6 +47,7 @@ const rootReducer = (state: any, action: { type: any; payload?: any }) => {
 const AuthContextProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const [csrfToken, setCsrfToken] = useState("");
+  const [accessToken, setAccessToken] = useState(String(Cookie.get("token")));
   const router = useRouter();
 
   useEffect(() => {
@@ -83,7 +86,7 @@ const AuthContextProvider: FC<Props> = (props) => {
   );
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, csrfToken }}>
+    <AuthContext.Provider value={{ state, dispatch, csrfToken, accessToken }}>
       {props.children}
     </AuthContext.Provider>
   );
