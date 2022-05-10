@@ -7,11 +7,11 @@ import writeServerResponse from "../helpers/response";
 import errorFormatter from "../helpers/errorFormatters";
 import {
   createUser,
-  getUserByEmail,
-  isUserExist,
+  loginUser,
+  getCurrentUser,
 } from "../services/user.service";
 import { signToken } from "../helpers/jwtHelper";
-import { comparePassword, hashPassword } from "../utils/auth";
+import { comparePassword } from "../utils/auth";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
 
@@ -29,13 +29,8 @@ const signup: RequestHandler = async (
     }
 
     const inputUser: IRegisterUserInput = req.body;
-    const { email } = inputUser;
 
-    if (await isUserExist(email)) {
-      next(ApiError.badRequest("Email already taken."));
-      return;
-    }
-    const user = await createUser(inputUser);
+    const user = await createUser(next, inputUser);
     const serverResponse = {
       result: user,
       statusCode: 201,
@@ -63,40 +58,24 @@ const login: RequestHandler = async (
     }
 
     const loginInput: ILoginUserInput = req.body;
-    const { email, password } = loginInput;
-    const user = await getUserByEmail(email);
-    if (!user) {
-      next(ApiError.badRequest("Email is incorrect."));
-      return;
-    }
+    const loginResponse = await loginUser(next, loginInput);
 
-    const match = await comparePassword(password, user.password);
-    if (match) {
-      const payload = {
-        id: user.id,
-        role: user.role,
-      };
-
-      const accessToken = signToken(payload, config.jwtExpires);
-      const result = {
-        status: "success",
-        data: user,
-      };
-      const serverResponse = {
-        result: result,
-        statusCode: 200,
-        contentType: "application/json",
-      };
-      let options: any = {
-        secure: config.env === "production" ? true : false,
-        httpOnly: config.env === "production" ? true : false,
-        sameSite: config.env === "production" ? true : false,
-      };
-      res.cookie("token", accessToken, options);
-      return writeServerResponse(res, serverResponse);
-    }
-    next(ApiError.badRequest("Incorrect password."));
-    return;
+    const result = {
+      status: "success",
+      data: loginResponse?.user,
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    let options: any = {
+      secure: config.env === "production" ? true : false,
+      httpOnly: config.env === "production" ? true : false,
+      sameSite: config.env === "production" ? true : false,
+    };
+    res.cookie("token", loginResponse?.accessToken, options);
+    return writeServerResponse(res, serverResponse);
   } catch (error: any) {
     next(ApiError.internal(`Something went wrong: ${error.message}`));
     return;
@@ -117,8 +96,30 @@ const logOut: RequestHandler = (
   return writeServerResponse(res, serverResponse);
 };
 
+const me = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.user;
+    const user = await getCurrentUser(id);
+    if (user) {
+      const result = { status: "success", data: user };
+      const serverResponse = {
+        result: result,
+        statusCode: 200,
+        contentType: "application/json",
+      };
+      return writeServerResponse(res, serverResponse);
+    }
+    next(ApiError.notFound("User not found"));
+    return;
+  } catch (error: any) {
+    next(ApiError.internal(`Something went wrong: ${error.message}`));
+    return;
+  }
+};
+
 export default {
   signup,
   login,
   logOut,
+  me,
 };
