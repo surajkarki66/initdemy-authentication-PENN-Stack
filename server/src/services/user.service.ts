@@ -1,3 +1,4 @@
+import { NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 
 import config from "../configs/config";
@@ -6,7 +7,6 @@ import { IUser } from "../interfaces/user";
 import { comparePassword, hashPassword } from "../utils/auth";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
-import { NextFunction } from "express";
 import { signToken } from "../helpers/jwtHelper";
 
 const prisma = new PrismaClient();
