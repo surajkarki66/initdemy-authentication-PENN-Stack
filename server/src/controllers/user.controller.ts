@@ -10,8 +10,6 @@ import {
   loginUser,
   getCurrentUser,
 } from "../services/user.service";
-import { signToken } from "../helpers/jwtHelper";
-import { comparePassword } from "../utils/auth";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
 
