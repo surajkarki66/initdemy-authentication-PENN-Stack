@@ -72,6 +72,7 @@ const login: RequestHandler = async (
       secure: config.env === "production" ? true : false,
       httpOnly: config.env === "production" ? true : false,
       sameSite: config.env === "production" ? true : false,
+      maxAge: Number(config.jwtExpiresInMilsec),
     };
     res.cookie("token", loginResponse?.accessToken, options);
     return writeServerResponse(res, serverResponse);

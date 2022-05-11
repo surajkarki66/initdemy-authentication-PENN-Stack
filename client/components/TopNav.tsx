@@ -48,7 +48,7 @@ const TopNav: NextComponentType = () => {
           <a>App</a>
         </Link>
       </Item>
-      {user && user.role && user.role.includes("INSTRUCTOR") ? (
+      {user && user.role && user.role.includes("INSTRUCTOR") && (
         <Item
           onClick={(e) => setCurrent(e.key)}
           key="/instructor/course/create"
@@ -58,7 +58,8 @@ const TopNav: NextComponentType = () => {
             <a>Create Course</a>
           </Link>
         </Item>
-      ) : (
+      )}
+      {user && user.role && user.role.includes("SUBSCRIBER") && (
         <Item
           onClick={(e) => setCurrent(e.key)}
           key="/user/become-instructor"
