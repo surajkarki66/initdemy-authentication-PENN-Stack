@@ -11,6 +11,7 @@ import { SyncOutlined } from "@ant-design/icons";
 
 import Axios from "../../axios-url";
 import { AuthContext } from "../../context/AuthContext";
+import UserNav from "../nav/UserNav";
 
 type Props = { children: ReactChild };
 
@@ -47,7 +48,14 @@ const UserRoute: FC<Props> = (props) => {
           className="d-flex justify-content-center display-1 text-primary p-5"
         />
       ) : (
-        <>{props.children}</>
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-2">
+              <UserNav />
+            </div>
+            <div className="col-md-10">{props.children}</div>
+          </div>
+        </div>
       )}
     </>
   );
