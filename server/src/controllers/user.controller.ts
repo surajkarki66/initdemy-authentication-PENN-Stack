@@ -12,6 +12,7 @@ import {
 } from "../services/user.service";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
+import { verifyToken } from "../helpers/jwtHelper";
 
 const signup: RequestHandler = async (
   req: Request,
@@ -115,9 +116,25 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const loggedIn: RequestHandler = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction
+) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.send("");
+    await verifyToken({ token, secretKey: String(config.jwtSecret) });
+    res.send(token);
+  } catch (err) {
+    res.send("");
+  }
+};
+
 export default {
   signup,
   login,
   logOut,
   me,
+  loggedIn,
 };
