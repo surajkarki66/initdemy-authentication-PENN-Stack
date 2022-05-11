@@ -7,6 +7,7 @@ import {
   Dispatch,
   useEffect,
   useState,
+  SetStateAction,
 } from "react";
 import { useRouter } from "next/router";
 
@@ -23,7 +24,8 @@ type AuthContextType = {
     payload?: any;
   }>;
   csrfToken: string;
-  accessToken: string;
+  accessToken: string | undefined;
+  setAccessToken: Dispatch<SetStateAction<string | undefined>>;
 };
 
 const initialState = {
@@ -47,7 +49,9 @@ const rootReducer = (state: any, action: { type: any; payload?: any }) => {
 const AuthContextProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const [csrfToken, setCsrfToken] = useState("");
-  const [accessToken, setAccessToken] = useState(String(Cookie.get("token")));
+  const [accessToken, setAccessToken] = useState<string | undefined>(
+    Cookie.get("token")
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -56,6 +60,7 @@ const AuthContextProvider: FC<Props> = (props) => {
       setCsrfToken(data.csrfToken);
     };
     getCsrfToken();
+    setAccessToken(Cookie.get("token"));
     dispatch({
       type: "LOGIN",
       payload: JSON.parse(String(window.localStorage.getItem("user"))),
@@ -86,7 +91,9 @@ const AuthContextProvider: FC<Props> = (props) => {
   );
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, csrfToken, accessToken }}>
+    <AuthContext.Provider
+      value={{ state, dispatch, csrfToken, accessToken, setAccessToken }}
+    >
       {props.children}
     </AuthContext.Provider>
   );

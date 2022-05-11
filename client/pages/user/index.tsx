@@ -6,14 +6,14 @@ import UserRoute from "../../components/routes/UserRoute";
 
 const UserIndex: NextPage = () => {
   const { state } = useContext(AuthContext);
-  const { user } = state;
 
   return (
     <>
       <UserRoute>
-        <h1 className="jumbotron text-center square">
-          <pre>{JSON.stringify(user)}</pre>
-        </h1>
+        <div className="jumbotron text-center bg-primary square">
+          <h1 style={{ color: "white" }}>User dashboard</h1>
+          <p className="lead">This is your workspace</p>
+        </div>
       </UserRoute>
     </>
   );

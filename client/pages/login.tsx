@@ -13,7 +13,8 @@ const Login: NextPage = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { state, dispatch, csrfToken } = useContext(AuthContext);
+  const { state, dispatch, csrfToken, setAccessToken } =
+    useContext(AuthContext);
   const { user } = state;
   const router = useRouter();
 
@@ -31,8 +32,10 @@ const Login: NextPage = () => {
         password,
       });
       if (data) {
-        dispatch({ type: "LOGIN", payload: data.data });
-        window.localStorage.setItem("user", JSON.stringify(data.data));
+        const { user, accessToken } = data.data;
+        dispatch({ type: "LOGIN", payload: user });
+        window.localStorage.setItem("user", JSON.stringify(user));
+        setAccessToken(accessToken);
         setLoading(false);
         router.push("/");
       }
