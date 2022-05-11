@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
   SetStateAction,
+  useCallback,
 } from "react";
 import { useRouter } from "next/router";
 
@@ -49,23 +50,28 @@ const rootReducer = (state: any, action: { type: any; payload?: any }) => {
 const AuthContextProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const [csrfToken, setCsrfToken] = useState("");
-  const [accessToken, setAccessToken] = useState<string | undefined>(
-    Cookie.get("token")
-  );
+  const [accessToken, setAccessToken] = useState(Cookie.get("token"));
   const router = useRouter();
 
-  useEffect(() => {
-    const getCsrfToken = async () => {
-      const { data } = await Axios.get("/users/csrf-token");
-      setCsrfToken(data.csrfToken);
-    };
-    getCsrfToken();
-    setAccessToken(Cookie.get("token"));
+  const getTokens = useCallback(async () => {
+    const csrfResponse = Axios.get("/users/csrf-token");
+    const tokenResponse = Axios.get("/users/loggedIn");
+    const [csrfResult, tokenResult] = await Promise.all([
+      csrfResponse,
+      tokenResponse,
+    ]);
+    const { data } = csrfResult;
+    setCsrfToken(data.csrfToken);
+    setAccessToken(tokenResult.data);
     dispatch({
       type: "LOGIN",
-      payload: JSON.parse(String(window.localStorage.getItem("user"))),
+      payload: JSON.parse(String(localStorage.getItem("user"))),
     });
-  }, [setCsrfToken]);
+  }, []);
+
+  useEffect(() => {
+    getTokens();
+  }, [getTokens]);
 
   Axios.interceptors.response.use(
     function (response) {
