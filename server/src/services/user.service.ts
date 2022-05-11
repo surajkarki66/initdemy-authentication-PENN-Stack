@@ -57,6 +57,7 @@ export const loginUser = async (
     };
 
     const accessToken = signToken(payload, config.jwtExpires);
+    user.password = "";
     return { accessToken, user };
   }
   next(ApiError.badRequest("Incorrect password."));
@@ -90,6 +91,18 @@ export const getCurrentUser = async (id: string) => {
     const user = (await prisma.user.findUnique({
       where: {
         id,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+
+        picture: true,
+        role: true,
+        stripeAccountId: true,
+        createdAt: true,
+        updatedAt: true,
       },
     })) as IUser;
 

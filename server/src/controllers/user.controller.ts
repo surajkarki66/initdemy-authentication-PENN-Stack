@@ -60,7 +60,7 @@ const login: RequestHandler = async (
 
     const result = {
       status: "success",
-      data: loginResponse?.user,
+      data: loginResponse,
     };
     const serverResponse = {
       result: result,
