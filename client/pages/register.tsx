@@ -18,14 +18,12 @@ const Register: NextPage = () => {
 
   const { state, csrfToken } = useContext(AuthContext);
   const { user } = state;
-  console.log(csrfToken);
 
   useEffect(() => {
     if (user !== null) router.push("/");
   }, [router, user]);
 
   const handleSubmit = async (e: SyntheticEvent) => {
-    console.log(csrfToken);
     e.preventDefault();
     try {
       setLoading(true);
