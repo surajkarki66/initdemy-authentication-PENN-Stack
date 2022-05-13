@@ -10,19 +10,29 @@ import {
   LoadingOutlined,
 } from "@ant-design/icons";
 import { AuthContext } from "../../context/AuthContext";
-import UserRoute from "../../components/routes/UserRoute";
 
 const BecomeInstructor: NextPage = () => {
   const [loading, setLoading] = useState(false);
   const {
     state: { user },
+    csrfToken,
+    accessToken,
   } = useContext(AuthContext);
+
+  const { id } = JSON.parse(String(localStorage.getItem("user")));
 
   const becomeInstructor = () => {
     setLoading(true);
-    Axios.post("/users/make-instructor")
+    Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
+    Axios.post(
+      "/instructors/make-instructor",
+      { userId: id },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    )
       .then((res) => {
-        window.location.href = res.data;
+        window.location.href = res.data.data;
       })
       .catch((error) => {
         toast("Stripe onboarding failed. Try again.");
