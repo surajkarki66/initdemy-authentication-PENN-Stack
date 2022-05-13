@@ -59,7 +59,7 @@ const login: RequestHandler = async (
     };
     res.cookie("token", loginResponse?.accessToken, options);
     return writeServerResponse(res, serverResponse);
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
 };
@@ -92,7 +92,7 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
       return writeServerResponse(res, serverResponse);
     }
     throw new HttpException(404, "User not found");
-  } catch (error: any) {
+  } catch (error) {
     next(error);
   }
 };

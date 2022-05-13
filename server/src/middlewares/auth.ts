@@ -10,12 +10,15 @@ const authenticate: RequestHandler = async (
   _res: Response,
   next: NextFunction
 ) => {
-  if (req.headers["authorization"]) {
-    const authorization = req.headers["authorization"].split(" ");
-    if (authorization[0] !== "Bearer") {
-      throw new HttpException(401, "Authentication failed");
-    } else {
-      try {
+  try {
+    if (req.headers["authorization"]) {
+      const authorization = req.headers["authorization"].split(" ");
+      if (authorization[0] !== "Bearer") {
+        throw new HttpException(
+          401,
+          "Authentication failed: Bearer token is missing!"
+        );
+      } else {
         const response = await verifyToken({
           token: authorization[1],
           secretKey: String(config.jwtSecret),
@@ -28,12 +31,12 @@ const authenticate: RequestHandler = async (
           return next();
         }
         throw new HttpException(403, error);
-      } catch (error) {
-        next(error);
       }
+    } else {
+      throw new HttpException(401, "JWT Token is required to authenticate");
     }
-  } else {
-    throw new HttpException(401, "Authentication failed");
+  } catch (error) {
+    next(error);
   }
 };
 
