@@ -54,19 +54,14 @@ const AuthContextProvider: FC<Props> = (props) => {
   const router = useRouter();
 
   const getTokens = useCallback(async () => {
-    const csrfResponse = Axios.get("/users/csrf-token");
-    const tokenResponse = Axios.get("/users/loggedIn");
-    const [csrfResult, tokenResult] = await Promise.all([
-      csrfResponse,
-      tokenResponse,
-    ]);
-    const { data } = csrfResult;
-    setCsrfToken(data.csrfToken);
-    setAccessToken(tokenResult.data);
+    const { data } = await Axios.get("/users/loggedIn");
+    setAccessToken(data);
     dispatch({
       type: "LOGIN",
       payload: JSON.parse(String(localStorage.getItem("user"))),
     });
+    const csrfResponse = await Axios.get("/users/csrf-token");
+    setCsrfToken(csrfResponse.data.csrfToken);
   }, []);
 
   useEffect(() => {
