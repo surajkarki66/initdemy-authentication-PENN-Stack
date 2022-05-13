@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 import config from "./configs/config";
 import UserRoutes from "./routes/user.route";
+import InstructorRoutes from "./routes/instructor.route";
 import apiErrorHandler from "./errors/apiErrorHandler";
 
 class Server {
@@ -23,6 +24,7 @@ class Server {
   private routes(): void {
     // General routes
     this.app.use("/api/users", new UserRoutes().router);
+    this.app.use("/api/instructors", new InstructorRoutes().router);
 
     // Error handler route
     this.app.use(apiErrorHandler);

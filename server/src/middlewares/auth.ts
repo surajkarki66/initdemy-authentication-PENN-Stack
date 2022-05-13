@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
-import ApiError from "../errors/apiError";
 import config from "../configs/config";
 import { ITokenPayload } from "../helpers/types/ITokenPayload";
 import { verifyToken } from "../helpers/jwtHelper";
+import HttpException from "../errors/HttpException";
 
 const authenticate: RequestHandler = async (
   req: Request,
@@ -13,8 +13,7 @@ const authenticate: RequestHandler = async (
   if (req.headers["authorization"]) {
     const authorization = req.headers["authorization"].split(" ");
     if (authorization[0] !== "Bearer") {
-      next(ApiError.unauthorized("Authentication failed."));
-      return;
+      throw new HttpException(401, "Authentication failed");
     } else {
       try {
         const response = await verifyToken({
@@ -28,16 +27,13 @@ const authenticate: RequestHandler = async (
           req.user = { id: id, role };
           return next();
         }
-        next(ApiError.forbidden(error));
-        return;
+        throw new HttpException(403, error);
       } catch (error) {
-        next(ApiError.forbidden(`Token is not verified: ${error}`));
-        return;
+        next(error);
       }
     }
   } else {
-    next(ApiError.unauthorized("Authentication failed"));
-    return;
+    throw new HttpException(401, "Authentication failed");
   }
 };
 
@@ -47,8 +43,7 @@ const permit = (roles: string[]) => {
     if (roles.includes(role)) {
       next();
     } else {
-      next(ApiError.unauthorized(`${role} is not allowed`));
-      return;
+      throw new HttpException(401, `${role} is not allowed`);
     }
   };
 };

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-
-import ApiError from "../../errors/apiError";
+import HttpException from "../../errors/HttpException";
 
 const onlyOwnerCanDoThis = (
   req: Request,
@@ -15,8 +14,7 @@ const onlyOwnerCanDoThis = (
   } else if (req.params && req.body.userId && req.body.userId === userId) {
     return next();
   } else {
-    next(ApiError.forbidden("Only owner can do this action"));
-    return;
+    throw new HttpException(403, "Only owner can do this action");
   }
 };
 

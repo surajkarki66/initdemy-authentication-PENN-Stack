@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import userValidation from "../middlewares/validations/userValidation";
 import userController from "../controllers/user.controller";
+import showDataValidationResult from "../middlewares/showDataValidationError";
 import { authenticate, permit } from "../middlewares/auth";
 
 export default class UserRoutes {
@@ -15,9 +16,15 @@ export default class UserRoutes {
     this.router.post(
       "/register",
       userValidation("signup"),
+      showDataValidationResult,
       userController.signup
     );
-    this.router.post("/login", userValidation("login"), userController.login);
+    this.router.post(
+      "/login",
+      userValidation("login"),
+      showDataValidationResult,
+      userController.login
+    );
     this.router.get("/logout", userController.logOut);
     this.router.get(
       "/me",

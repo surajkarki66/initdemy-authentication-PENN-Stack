@@ -25,8 +25,8 @@ export default function userValidation(method: string): ValidationChain[] {
           })
           .withMessage("Last Name must be between 3 to 32 characters"),
         body("email", "Email is required")
-          .isEmail()
           .notEmpty()
+          .isEmail()
           .withMessage("Must be a valid email address"),
         body("password", "Password is required")
           .notEmpty()
@@ -43,8 +43,8 @@ export default function userValidation(method: string): ValidationChain[] {
     case "login": {
       return [
         body("email", "Email is required")
-          .isEmail()
           .notEmpty()
+          .isEmail()
           .withMessage("Must be a valid email address"),
         body("password", "Password is required")
           .notEmpty()

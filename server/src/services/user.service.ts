@@ -1,8 +1,7 @@
-import { NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 
 import config from "../configs/config";
-import ApiError from "../errors/apiError";
+import HttpException from "../errors/HttpException";
 import { IUser } from "../interfaces/user";
 import { comparePassword, hashPassword } from "../utils/auth";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
@@ -39,15 +38,11 @@ export const getUserByEmail = async (email: string) => {
   })) as IUser;
 };
 
-export const loginUser = async (
-  next: NextFunction,
-  loginInput: ILoginUserInput
-) => {
+export const loginUser = async (loginInput: ILoginUserInput) => {
   const { email, password } = loginInput;
   const user = await getUserByEmail(email);
   if (!user) {
-    next(ApiError.badRequest("Email is incorrect."));
-    return;
+    throw new HttpException(400, "Email is not registered");
   }
   const match = await comparePassword(password, user.password);
   if (match) {
@@ -60,26 +55,21 @@ export const loginUser = async (
     user.password = "";
     return { accessToken, user };
   }
-  next(ApiError.badRequest("Incorrect password."));
-  return;
+  throw new HttpException(400, "Incorrect password!");
 };
 
-export const createUser = async (
-  next: NextFunction,
-  inputUser: IRegisterUserInput
-) => {
+export const createUser = async (inputUser: IRegisterUserInput) => {
   try {
     const { email } = inputUser;
     if (await isUserExist(email)) {
-      next(ApiError.badRequest("Email already taken."));
-      return;
+      throw new HttpException(400, "Email is already registered");
     }
     const hashedPassword = String(await hashPassword(inputUser.password));
 
     const user = await prisma.user.create({
       data: { ...inputUser, password: hashedPassword },
     });
-
+    user.password = "";
     return user as IUser;
   } catch (error) {
     throw error;

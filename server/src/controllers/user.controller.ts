@@ -1,10 +1,7 @@
-import { validationResult } from "express-validator";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
-import ApiError from "../errors/apiError";
 import config from "../configs/config";
 import writeServerResponse from "../helpers/response";
-import errorFormatter from "../helpers/errorFormatters";
 import {
   createUser,
   loginUser,
@@ -13,6 +10,7 @@ import {
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
 import { verifyToken } from "../helpers/jwtHelper";
+import HttpException from "../errors/HttpException";
 
 const signup: RequestHandler = async (
   req: Request,
@@ -20,16 +18,9 @@ const signup: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-      const msg = errors.array();
-      next(ApiError.badRequest(msg[0]));
-      return;
-    }
-
     const inputUser: IRegisterUserInput = req.body;
 
-    const user = await createUser(next, inputUser);
+    const user = await createUser(inputUser);
     const serverResponse = {
       result: user,
       statusCode: 201,
@@ -37,9 +28,8 @@ const signup: RequestHandler = async (
     };
 
     return writeServerResponse(res, serverResponse);
-  } catch (error: any) {
-    next(ApiError.internal(`Something went wrong: ${error.message}`));
-    return;
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -49,15 +39,8 @@ const login: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const errors = validationResult(req).formatWith(errorFormatter);
-    if (!errors.isEmpty()) {
-      const msg = errors.array();
-      next(ApiError.badRequest(msg[0]));
-      return;
-    }
-
     const loginInput: ILoginUserInput = req.body;
-    const loginResponse = await loginUser(next, loginInput);
+    const loginResponse = await loginUser(loginInput);
 
     const result = {
       status: "success",
@@ -77,8 +60,7 @@ const login: RequestHandler = async (
     res.cookie("token", loginResponse?.accessToken, options);
     return writeServerResponse(res, serverResponse);
   } catch (error: any) {
-    next(ApiError.internal(`Something went wrong: ${error.message}`));
-    return;
+    next(error);
   }
 };
 
@@ -109,11 +91,9 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
       };
       return writeServerResponse(res, serverResponse);
     }
-    next(ApiError.notFound("User not found"));
-    return;
+    throw new HttpException(404, "User not found");
   } catch (error: any) {
-    next(ApiError.internal(`Something went wrong: ${error.message}`));
-    return;
+    next(error);
   }
 };
 
