@@ -1,13 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 
-import ApiError from "./apiError";
+import HttpException from "./HttpException";
 import writeServerResponse from "../helpers/response";
 
 const apiErrorHandler = (
-  err: ApiError,
+  err: HttpException,
   _req: Request,
   res: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ) => {
   let serverResponse = {
@@ -15,18 +14,23 @@ const apiErrorHandler = (
       status: "failed",
       data: { error: err.message },
     },
-    statusCode: err.code,
+    statusCode: err.errorCode,
     contentType: "application/json",
   };
-  if (err instanceof ApiError) {
+  if (err && err.errorCode) {
+    return writeServerResponse(res, serverResponse);
+  } else if (err) {
+    serverResponse = {
+      result: {
+        status: "failed",
+        data: { error: `Something went wrong: ${err.message}` },
+      },
+      statusCode: 500,
+      contentType: "application/json",
+    };
+
     return writeServerResponse(res, serverResponse);
   }
-  serverResponse = {
-    ...serverResponse,
-    statusCode: 500,
-  };
-
-  return writeServerResponse(res, serverResponse);
 };
 
 export default apiErrorHandler;
