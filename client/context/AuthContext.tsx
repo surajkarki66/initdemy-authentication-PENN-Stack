@@ -4,29 +4,17 @@ import {
   createContext,
   ReactFragment,
   FC,
-  Dispatch,
   useEffect,
   useState,
-  SetStateAction,
   useCallback,
 } from "react";
 import { useRouter } from "next/router";
 
 import Axios from "../axios-url";
+import { AuthContextType, IUser } from "../types/types";
 
 type Props = {
   children: ReactFragment;
-};
-
-type AuthContextType = {
-  state: any;
-  dispatch: Dispatch<{
-    type: any;
-    payload?: any;
-  }>;
-  csrfToken: string;
-  accessToken: string | undefined;
-  setAccessToken: Dispatch<SetStateAction<string | undefined>>;
 };
 
 const initialState = {
@@ -35,7 +23,10 @@ const initialState = {
 
 const AuthContext = createContext({} as AuthContextType);
 
-const rootReducer = (state: any, action: { type: any; payload?: any }) => {
+const rootReducer = (
+  state: { user: IUser },
+  action: { type: any; payload?: any }
+) => {
   switch (action.type) {
     case "LOGIN":
       return { ...state, user: action.payload };
