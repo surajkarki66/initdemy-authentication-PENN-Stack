@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('SUBSCRIBER', 'INSTRUCTOR', 'ADMIN');
+CREATE TYPE "UserRole" AS ENUM ('SUBSCRIBER', 'ADMIN');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -8,11 +8,11 @@ CREATE TABLE "users" (
     "firstName" VARCHAR(32) NOT NULL,
     "lastName" VARCHAR(32) NOT NULL,
     "password" VARCHAR(64) NOT NULL,
-    "picture" TEXT NOT NULL DEFAULT E'./avatar.png',
+    "avatar" TEXT NOT NULL,
     "role" "UserRole" NOT NULL DEFAULT E'SUBSCRIBER',
-    "stripeAccountId" TEXT NOT NULL DEFAULT E'',
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateIndex
