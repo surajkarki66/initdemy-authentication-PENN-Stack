@@ -87,10 +87,9 @@ export const getCurrentUser = async (id: string) => {
         email: true,
         firstName: true,
         lastName: true,
-
-        picture: true,
+        avatar: true,
         role: true,
-        stripeAccountId: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -3,4 +3,5 @@ export interface IRegisterUserInput {
   firstName: string;
   lastName: string;
   password: string;
+  avatar: string;
 }

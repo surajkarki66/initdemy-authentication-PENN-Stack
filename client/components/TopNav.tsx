@@ -8,8 +8,6 @@ import {
   CoffeeOutlined,
   LoginOutlined,
   UserAddOutlined,
-  CarryOutOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 
@@ -48,28 +46,6 @@ const TopNav: NextComponentType = () => {
           <a>App</a>
         </Link>
       </Item>
-      {user && user.role && user.role.includes("INSTRUCTOR") && (
-        <Item
-          onClick={(e) => setCurrent(e.key)}
-          key="/instructor/course/create"
-          icon={<CarryOutOutlined />}
-        >
-          <Link href="/instructor/course/create">
-            <a>Create Course</a>
-          </Link>
-        </Item>
-      )}
-      {user && user.role && user.role.includes("SUBSCRIBER") && (
-        <Item
-          onClick={(e) => setCurrent(e.key)}
-          key="/user/become-instructor"
-          icon={<TeamOutlined />}
-        >
-          <Link href="/user/become-instructor">
-            <a>Become Instructor</a>
-          </Link>
-        </Item>
-      )}
 
       {user === null && (
         <>

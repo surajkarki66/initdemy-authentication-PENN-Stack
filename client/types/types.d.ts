@@ -1,4 +1,4 @@
-export type UserRole = "SUBSCRIBER" | "INSTRUCTOR" | "ADMIN";
+export type UserRole = "SUBSCRIBER" | "ADMIN";
 
 export type IUser = {
   id: string;
@@ -6,9 +6,9 @@ export type IUser = {
   firstName: string;
   lastName: string;
   password: string;
-  picture: string;
+  avatar: string;
   role: UserRole;
-  stripeAccountId: string;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -22,4 +22,12 @@ export type AuthContextType = {
     type: any;
     payload?: any;
   }>;
+};
+
+export type TokenPayload = {
+  id: string;
+  role: ROLE;
+  iat: number;
+  exp: number;
+  error: string;
 };

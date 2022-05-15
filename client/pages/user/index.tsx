@@ -1,12 +1,8 @@
 import type { NextPage } from "next";
-import { useContext } from "react";
 
-import { AuthContext } from "../../context/AuthContext";
 import UserRoute from "../../components/routes/UserRoute";
 
 const UserIndex: NextPage = () => {
-  const { state } = useContext(AuthContext);
-
   return (
     <>
       <UserRoute>

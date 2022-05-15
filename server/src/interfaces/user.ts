@@ -1,4 +1,4 @@
-export type UserRole = "SUBSCRIBER" | "INSTRUCTOR" | "ADMIN";
+export type UserRole = "SUBSCRIBER" | "ADMIN";
 
 export interface IUser {
   id: string;
@@ -6,9 +6,9 @@ export interface IUser {
   firstName: string;
   lastName: string;
   password: string;
-  picture: string;
+  avatar: string;
   role: UserRole;
-  stripeAccountId: string;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

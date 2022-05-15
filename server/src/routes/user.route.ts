@@ -29,7 +29,7 @@ export default class UserRoutes {
     this.router.get(
       "/me",
       authenticate,
-      permit(["SUBSCRIBER", "INSTRUCTOR", "ADMIN"]),
+      permit(["SUBSCRIBER", "ADMIN"]),
       userController.me
     );
     this.router.get("/loggedIn", userController.loggedIn);

@@ -1,3 +1,4 @@
+import moment from "moment";
 import { body, ValidationChain } from "express-validator";
 
 export default function userValidation(method: string): ValidationChain[] {
@@ -38,6 +39,10 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("Password Must Contain a Number")
           .matches("[A-Z]")
           .withMessage("Password Must Contain an Uppercase"),
+        body("avatar")
+          .default(`http://gravatar.com/avatar/${moment().unix()}?d=identicon`)
+          .isString()
+          .withMessage("avatar must be a string"),
       ];
     }
     case "login": {
