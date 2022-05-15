@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
+import mailGun from "../configs/mailgun";
 import config from "../configs/config";
 import HttpException from "../errors/HttpException";
 import { IUser } from "../interfaces/user";
@@ -69,8 +70,28 @@ export const createUser = async (inputUser: IRegisterUserInput) => {
     const user = await prisma.user.create({
       data: { ...inputUser, password: hashedPassword },
     });
+
     user.password = "";
-    return user as IUser;
+    const payload = {
+      id: user.id,
+      role: user.role,
+    };
+
+    const accessToken = signToken(payload, config.jwtExpiresForEmailActivation);
+    const response = await mailGun.messages().send({
+      from: `Initdemy <${config.email}>`,
+      to: `${email}`,
+      subject: `Confirmation email!`,
+      html: `
+                    <h1>Please click the following link to activate your email address!</h1>
+                    <p>${config.url}/user/activate/${accessToken}</p>
+                    <hr />
+                    <p>The verification link will expired after 24 hours.</p>
+                    <p>This email may contain sensitive information</p>
+                    <p>${config.url}</p>
+                `,
+    });
+    return { user, response };
   } catch (error) {
     throw error;
   }

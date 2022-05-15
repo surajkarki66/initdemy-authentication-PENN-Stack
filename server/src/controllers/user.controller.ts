@@ -20,7 +20,7 @@ const signup: RequestHandler = async (
   try {
     const inputUser: IRegisterUserInput = req.body;
 
-    const user = await createUser(inputUser);
+    const { user } = await createUser(inputUser);
     const serverResponse = {
       result: user,
       statusCode: 201,
