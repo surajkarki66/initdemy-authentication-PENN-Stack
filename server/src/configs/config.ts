@@ -16,6 +16,15 @@ const SERVER = {
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES = process.env.JWT_EXPIRES;
 const JWT_EXPIRES_IN_MILSEC = process.env.JWT_EXPIRES_IN_MILSEC;
+const JWT_SECRET_FOR_EMAIL_ACTIVATION =
+  process.env.JWT_SECRET_FOR_EMAIL_ACTIVATION;
+
+const JWT_EXPIRES_FOR_EMAIL_ACTIVATION =
+  process.env.JWT_EXPIRES_FOR_EMAIL_ACTIVATION;
+
+const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
+const MAILGUN_PRIVATE_API_KEY = process.env.MAILGUN_PRIVATE_API_KEY;
+const EMAIL = process.env.EMAIL;
 
 const config = {
   server: SERVER,
@@ -24,6 +33,11 @@ const config = {
   jwtSecret: JWT_SECRET,
   jwtExpires: JWT_EXPIRES,
   jwtExpiresInMilsec: JWT_EXPIRES_IN_MILSEC,
+  jwtExpiresForEmailActivation: JWT_EXPIRES_FOR_EMAIL_ACTIVATION,
+  jwtSecretForEmailActivation: JWT_SECRET_FOR_EMAIL_ACTIVATION,
+  mailgunDomain: MAILGUN_DOMAIN,
+  mailgunPrivateAPIKey: MAILGUN_PRIVATE_API_KEY,
+  email: EMAIL,
 };
 
 export default config;
