@@ -3,7 +3,6 @@ import { SyncOutlined } from "@ant-design/icons";
 
 import Axios from "../../axios-url";
 import { AuthContext } from "../../context/AuthContext";
-import UserRoute from "../../components/routes/UserRoute";
 
 const StripeCallback = () => {
   const {
