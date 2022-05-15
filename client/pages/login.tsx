@@ -27,7 +27,7 @@ const Login: NextPage = () => {
     try {
       setLoading(true);
       Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
-      const { data } = await Axios.post(`/users/login`, {
+      const { data } = await Axios.post(`/user/login`, {
         email,
         password,
       });

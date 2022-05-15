@@ -28,7 +28,7 @@ const Register: NextPage = () => {
     try {
       setLoading(true);
       Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
-      const { data } = await Axios.post(`/users/register`, {
+      const { data } = await Axios.post(`/user/register`, {
         firstName,
         lastName,
         email,

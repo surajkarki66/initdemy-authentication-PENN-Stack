@@ -25,7 +25,7 @@ const BecomeInstructor: NextPage = () => {
     setLoading(true);
     Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
     Axios.post(
-      "/instructors/make-instructor",
+      "/instructor/make-instructor",
       { userId: id },
       {
         headers: { Authorization: `Bearer ${accessToken}` },

@@ -24,7 +24,7 @@ const UserRoute: FC<Props> = (props) => {
   const fetchUser = useCallback(async () => {
     try {
       Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
-      const { data } = await Axios.get("/users/me", {
+      const { data } = await Axios.get("/user/me", {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (data.data) {

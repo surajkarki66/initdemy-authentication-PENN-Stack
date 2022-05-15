@@ -23,8 +23,8 @@ class Server {
 
   private routes(): void {
     // General routes
-    this.app.use("/api/users", new UserRoutes().router);
-    this.app.use("/api/instructors", new InstructorRoutes().router);
+    this.app.use("/api/user", new UserRoutes().router);
+    this.app.use("/api/instructor", new InstructorRoutes().router);
 
     // Error handler route
     this.app.use(apiErrorHandler);

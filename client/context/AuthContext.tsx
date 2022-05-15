@@ -45,13 +45,13 @@ const AuthContextProvider: FC<Props> = (props) => {
   const router = useRouter();
 
   const getTokens = useCallback(async () => {
-    const { data } = await Axios.get("/users/loggedIn");
+    const { data } = await Axios.get("/user/loggedIn");
     setAccessToken(data);
     dispatch({
       type: "LOGIN",
       payload: JSON.parse(String(localStorage.getItem("user"))),
     });
-    const csrfResponse = await Axios.get("/users/csrf-token");
+    const csrfResponse = await Axios.get("/user/csrf-token");
     setCsrfToken(csrfResponse.data.csrfToken);
   }, []);
 
@@ -67,7 +67,7 @@ const AuthContextProvider: FC<Props> = (props) => {
       const res = error.response;
       if (res.status === 401 && res.config && !res.config.__isRetryRequest) {
         return new Promise((_resolve, reject) => {
-          Axios.get("/users/logout")
+          Axios.get("/user/logout")
             .then((_data) => {
               dispatch({ type: "LOGOUT" });
               window.localStorage.removeItem("user");

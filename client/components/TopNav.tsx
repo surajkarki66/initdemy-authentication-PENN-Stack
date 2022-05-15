@@ -33,7 +33,7 @@ const TopNav: NextComponentType = () => {
     dispatch({ type: "LOGOUT" });
     window.localStorage.removeItem("user");
     Axios.defaults.headers.post["X-CSRF-Token"] = csrfToken;
-    const { data } = await Axios.get("/users/logout");
+    const { data } = await Axios.get("/user/logout");
     toast(data.data);
     router.push("/login");
   };
