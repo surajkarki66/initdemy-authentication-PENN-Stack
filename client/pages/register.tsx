@@ -35,7 +35,9 @@ const Register: NextPage = () => {
         password,
       });
       if (data) {
-        toast.success("Registration successful. Please login.");
+        toast.success(
+          "Registration successful and email is sent to you to activate  your account!"
+        );
         setLoading(false);
         router.push("/login");
       }
