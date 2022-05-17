@@ -177,3 +177,11 @@ export const activateUser = async (token: string) => {
     throw error;
   }
 };
+
+export const requestForgotPassword = async (email: string) => {
+  try {
+    // Perform business logic
+  } catch (error) {
+    throw error;
+  }
+};

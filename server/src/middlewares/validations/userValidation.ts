@@ -66,6 +66,14 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("Must be a valid jwt"),
       ];
     }
+    case "forgotPassword": {
+      return [
+        body("email", "Email is required")
+          .notEmpty()
+          .isEmail()
+          .withMessage("Must be a valid email address"),
+      ];
+    }
 
     default:
       return [];
