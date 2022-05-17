@@ -1,15 +1,16 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 
 import config from "../configs/config";
+import { verifyToken } from "../helpers/jwtHelper";
 import writeServerResponse from "../helpers/response";
 import {
   createUser,
   loginUser,
   getCurrentUser,
+  activateUser,
 } from "../services/user.service";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
-import { verifyToken } from "../helpers/jwtHelper";
 import HttpException from "../errors/HttpException";
 
 const signup: RequestHandler = async (
@@ -64,6 +65,29 @@ const login: RequestHandler = async (
   }
 };
 
+const userActivation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { token } = req.body;
+    const user = await activateUser(token);
+    const result = {
+      status: "success",
+      data: { message: "user successfully activated", user },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const logOut: RequestHandler = (
   _req: Request,
   res: Response,
@@ -100,15 +124,17 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
 const loggedIn: RequestHandler = async (
   req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
   try {
     const token = req.cookies.token;
-    if (!token) return res.send("");
-    await verifyToken({ token, secretKey: String(config.jwtSecret) });
+    if (!token) {
+      throw new HttpException(404, "Token not found");
+    }
+    await verifyToken({ token, secretKey: config.jwtSecret });
     res.send(token);
   } catch (err) {
-    res.send("");
+    next(err);
   }
 };
 
@@ -116,6 +142,7 @@ export default {
   signup,
   login,
   logOut,
+  userActivation,
   me,
   loggedIn,
 };

@@ -1,13 +1,13 @@
 import jwt from "jsonwebtoken";
 
 import { UserRole } from "./../interfaces/user";
-import config from "../configs/config";
 
 const signToken = (
   payload: { id: string; role: UserRole },
-  expiresIn: string | number | undefined
+  expiresIn: string | number | undefined,
+  secretKey: string | undefined
 ) => {
-  const secret = String(config.jwtSecret);
+  const secret = String(secretKey);
   const options = {
     expiresIn: expiresIn,
     issuer: "initdemy.com",
@@ -19,9 +19,9 @@ const verifyToken = async ({
   secretKey,
 }: {
   token: string;
-  secretKey: string;
+  secretKey: string | undefined;
 }) => {
-  return jwt.verify(token, secretKey, (error, response) => {
+  return jwt.verify(token, String(secretKey), (error, response) => {
     if (error) {
       if (String(error).startsWith("TokenExpiredError")) {
         return { error: "Expired link. Signup again." };

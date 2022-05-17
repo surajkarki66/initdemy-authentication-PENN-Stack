@@ -32,6 +32,12 @@ export default class UserRoutes {
       permit(["SUBSCRIBER", "ADMIN"]),
       userController.me
     );
+    this.router.post(
+      "/userActivation",
+      userValidation("userActivation"),
+      showDataValidationResult,
+      userController.userActivation
+    );
     this.router.get("/loggedIn", userController.loggedIn);
     this.router.get("/csrf-token", (req, res) => {
       return res.json({ csrfToken: req.csrfToken() });

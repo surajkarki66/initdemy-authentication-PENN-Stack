@@ -58,6 +58,15 @@ export default function userValidation(method: string): ValidationChain[] {
       ];
     }
 
+    case "userActivation": {
+      return [
+        body("token", "Token is required")
+          .notEmpty()
+          .isJWT()
+          .withMessage("Must be a valid jwt"),
+      ];
+    }
+
     default:
       return [];
   }

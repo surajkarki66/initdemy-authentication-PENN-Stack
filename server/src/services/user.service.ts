@@ -7,7 +7,8 @@ import { IUser } from "../interfaces/user";
 import { comparePassword, hashPassword } from "../utils/auth";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
-import { signToken } from "../helpers/jwtHelper";
+import { signToken, verifyToken } from "../helpers/jwtHelper";
+import { ITokenPayload } from "../helpers/types/ITokenPayload";
 
 const prisma = new PrismaClient();
 
@@ -52,7 +53,7 @@ export const loginUser = async (loginInput: ILoginUserInput) => {
       role: user.role,
     };
 
-    const accessToken = signToken(payload, config.jwtExpires);
+    const accessToken = signToken(payload, config.jwtExpires, config.jwtSecret);
     user.password = "";
     return { accessToken, user };
   }
@@ -77,7 +78,11 @@ export const createUser = async (inputUser: IRegisterUserInput) => {
       role: user.role,
     };
 
-    const accessToken = signToken(payload, config.jwtExpiresForEmailActivation);
+    const accessToken = signToken(
+      payload,
+      config.jwtExpiresForEmailActivation,
+      config.jwtSecretForEmailActivation
+    );
     const response = await mailGun.messages().send({
       from: `Initdemy <${config.email}>`,
       to: `${email}`,
@@ -116,6 +121,57 @@ export const getCurrentUser = async (id: string) => {
       },
     })) as IUser;
 
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const activateUser = async (token: string) => {
+  try {
+    const response = await verifyToken({
+      token,
+      secretKey: config.jwtSecretForEmailActivation,
+    });
+
+    const { id, error } = response as unknown as ITokenPayload;
+    const user = (await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    })) as IUser;
+
+    if (!user) {
+      throw new HttpException(404, "User not found");
+    }
+
+    if (error) {
+      throw new HttpException(400, error);
+    }
+
+    const updateObject = {
+      isActive: true,
+      updatedAt: new Date(),
+    };
+
+    if (!user.isActive) {
+      const updatedUser = (await prisma.user.update({
+        where: { id },
+        data: updateObject,
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          avatar: true,
+          role: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      })) as IUser;
+      return updatedUser;
+    }
     return user;
   } catch (error) {
     throw error;
