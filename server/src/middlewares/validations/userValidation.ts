@@ -93,6 +93,30 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("New Password Must Contain an Uppercase"),
       ];
     }
+    case "changePassword": {
+      return [
+        body("oldPassword", "Old Password is required")
+          .notEmpty()
+          .isString()
+          .withMessage("Old Password must be string"),
+
+        body("newPassword", "New Password is required")
+          .notEmpty()
+          .isString()
+          .withMessage("New Password must be string")
+          .isLength({ min: 6, max: 64 })
+          .withMessage("New Password must be greater than 6 ")
+          .matches("[0-9]")
+          .withMessage("New Password Must Contain a Number")
+          .matches("[A-Z]")
+          .withMessage("New Password Must Contain an Uppercase"),
+
+        body("userId", "UserId is required")
+          .notEmpty()
+          .isString()
+          .withMessage("UserId must be string"),
+      ];
+    }
 
     default:
       return [];

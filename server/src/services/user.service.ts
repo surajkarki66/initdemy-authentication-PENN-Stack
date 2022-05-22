@@ -288,3 +288,48 @@ export const resetUserPassword = async (
     throw error;
   }
 };
+
+export const changeUserPassword = async (
+  oldPassword: string,
+  newPassword: string,
+  userId: string
+) => {
+  try {
+    const user = (await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    })) as IUser;
+    if (!user) {
+      throw new HttpException(404, "User not found");
+    }
+    const match = await comparePassword(oldPassword, user.password);
+    if (!match) {
+      throw new HttpException(401, "Oops! Password is incorrect");
+    }
+    const hashedPassword = String(await hashPassword(newPassword));
+    const updateObject = {
+      password: hashedPassword,
+      updatedAt: new Date(),
+    };
+    const updatedUser = (await prisma.user.update({
+      where: { id: userId },
+      data: updateObject,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })) as IUser;
+
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};

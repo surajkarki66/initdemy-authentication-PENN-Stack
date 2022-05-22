@@ -10,6 +10,7 @@ import {
   activateUser,
   requestForgotPassword,
   resetUserPassword,
+  changeUserPassword,
 } from "../services/user.service";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
@@ -142,6 +143,36 @@ const resetPassword = async (
     next(error);
   }
 };
+const changePassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userId, oldPassword, newPassword } = req.body;
+    const updatedUser = await changeUserPassword(
+      oldPassword,
+      newPassword,
+      userId
+    );
+
+    const result = {
+      status: "success",
+      data: {
+        message: "Password has been changed successfully.",
+        user: updatedUser,
+      },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
 
 const logOut: RequestHandler = (
   _req: Request,
@@ -200,6 +231,7 @@ export default {
   userActivation,
   forgotPassword,
   resetPassword,
+  changePassword,
   me,
   loggedIn,
 };
