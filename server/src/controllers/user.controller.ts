@@ -9,6 +9,7 @@ import {
   getCurrentUser,
   activateUser,
   requestForgotPassword,
+  resetUserPassword,
 } from "../services/user.service";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
@@ -96,11 +97,39 @@ const forgotPassword = async (
 ) => {
   try {
     const { email } = req.body;
-    const response = await requestForgotPassword(email);
+    const { response } = await requestForgotPassword(email);
+
     const result = {
       status: "success",
       data: {
-        message: `Email has been sent to ${email}. Follow the instruction to reset your password.`,
+        message: `Email has been sent to ${email}. Follow the instruction to reset your password. ${response.message}`,
+      },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const resetPassword = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { resetLink, newPassword } = req.body;
+    const updatedUser = await resetUserPassword(resetLink, newPassword);
+
+    const result = {
+      status: "success",
+      data: {
+        message: "Password has been reset successfully.",
+        user: updatedUser,
       },
     };
     const serverResponse = {
@@ -170,6 +199,7 @@ export default {
   logOut,
   userActivation,
   forgotPassword,
+  resetPassword,
   me,
   loggedIn,
 };

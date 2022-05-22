@@ -9,6 +9,7 @@ export interface IUser {
   avatar: string;
   role: UserRole;
   isActive: boolean;
+  resetLink: string;
   createdAt: Date;
   updatedAt: Date;
 }

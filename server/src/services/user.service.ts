@@ -180,7 +180,110 @@ export const activateUser = async (token: string) => {
 
 export const requestForgotPassword = async (email: string) => {
   try {
-    // Perform business logic
+    const user = await getUserByEmail(email);
+    if (user) {
+      const { id, role } = user;
+      const payload = {
+        id,
+        role,
+      };
+
+      const accessToken = signToken(
+        payload,
+        config.jwtExpiresForForgotPassword,
+        config.jwtSecretForForgotPassword
+      );
+
+      const updateObject = {
+        resetLink: accessToken,
+        updatedAt: new Date(),
+      };
+      const updatedUser = (await prisma.user.update({
+        where: { id },
+        data: updateObject,
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          avatar: true,
+          role: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      })) as IUser;
+
+      const response = await mailGun.messages().send({
+        from: `Initdemy <${config.email}>`,
+        to: `${email}`,
+        subject: `Password Reset link!`,
+        html: `
+                    <h1>Please use the following link to reset your password</h1>
+                    <p>${config.url}/user/password-reset/${accessToken}</p>
+                    <hr />
+                    <p>The link will expired after 20 minutes.</p>
+                    <p>This email may contain sensitive information</p>
+                    <p>${config.url}</p>
+
+                `,
+      });
+      return { updatedUser, response };
+    } else {
+      throw new HttpException(404, "User with that email does not exist");
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const resetUserPassword = async (
+  resetLink: string,
+  newPassword: string
+) => {
+  try {
+    const response = await verifyToken({
+      token: resetLink,
+      secretKey: config.jwtSecretForForgotPassword,
+    });
+
+    const { id, error } = response as unknown as ITokenPayload;
+    if (error) {
+      throw new HttpException(400, error);
+    }
+    const user = (await prisma.user.findFirst({
+      where: {
+        resetLink,
+      },
+    })) as IUser;
+
+    if (!user) {
+      throw new HttpException(404, "Authentication error!");
+    }
+    const hashedPassword = String(await hashPassword(newPassword));
+    const updateObject = {
+      resetLink: "",
+      password: hashedPassword,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = (await prisma.user.update({
+      where: { id },
+      data: updateObject,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })) as IUser;
+
+    return updatedUser;
   } catch (error) {
     throw error;
   }

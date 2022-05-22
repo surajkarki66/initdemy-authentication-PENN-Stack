@@ -74,6 +74,25 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("Must be a valid email address"),
       ];
     }
+    case "resetPassword": {
+      return [
+        body("resetLink", "resetLink is required")
+          .notEmpty()
+          .isJWT()
+          .withMessage("Must be a valid jwt"),
+
+        body("newPassword", "New Password is required")
+          .notEmpty()
+          .isString()
+          .withMessage("New Password must be string")
+          .isLength({ min: 6, max: 64 })
+          .withMessage("New Password must be greater than 6 ")
+          .matches("[0-9]")
+          .withMessage("New Password Must Contain a Number")
+          .matches("[A-Z]")
+          .withMessage("New Password Must Contain an Uppercase"),
+      ];
+    }
 
     default:
       return [];

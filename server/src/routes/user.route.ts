@@ -44,6 +44,12 @@ export default class UserRoutes {
       showDataValidationResult,
       userController.forgotPassword
     );
+    this.router.post(
+      "/resetPassword",
+      userValidation("resetPassword"),
+      showDataValidationResult,
+      userController.resetPassword
+    );
     this.router.get("/loggedIn", userController.loggedIn);
     this.router.get("/csrf-token", (req, res) => {
       return res.json({ csrfToken: req.csrfToken() });
