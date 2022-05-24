@@ -3,6 +3,7 @@ import { Router } from "express";
 import userValidation from "../middlewares/validations/userValidation";
 import userController from "../controllers/user.controller";
 import showDataValidationResult from "../middlewares/showDataValidationError";
+import { onlyOwnerCanDoThis } from "../middlewares/permissions/userPermissions";
 import { authenticate, permit } from "../middlewares/auth";
 
 export default class UserRoutes {
@@ -52,8 +53,11 @@ export default class UserRoutes {
     );
     this.router.patch(
       "/changePassword",
+      authenticate,
+      permit(["SUBSCRIBER", "ADMIN"]),
       userValidation("changePassword"),
       showDataValidationResult,
+      onlyOwnerCanDoThis,
       userController.changePassword
     );
     this.router.get("/loggedIn", userController.loggedIn);
