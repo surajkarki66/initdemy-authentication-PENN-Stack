@@ -117,6 +117,14 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("UserId must be string"),
       ];
     }
+    case "verifyEmail": {
+      return [
+        body("userId", "userId is required")
+          .notEmpty()
+          .isString()
+          .withMessage("userId must be string"),
+      ];
+    }
 
     default:
       return [];

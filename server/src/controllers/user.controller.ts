@@ -11,6 +11,7 @@ import {
   requestForgotPassword,
   resetUserPassword,
   changeUserPassword,
+  sendEmailVerification,
 } from "../services/user.service";
 import { IRegisterUserInput } from "../interfaces/register-user-input";
 import { ILoginUserInput } from "../interfaces/login-user-input";
@@ -79,6 +80,29 @@ const userActivation = async (
     const result = {
       status: "success",
       data: { message: "user successfully activated", user },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.body;
+    const { user } = await sendEmailVerification(userId);
+
+    const result = {
+      status: "success",
+      data: {
+        message: "Confirmation email is sent! Please check your email.",
+        user,
+      },
     };
     const serverResponse = {
       result: result,
@@ -228,6 +252,7 @@ export default {
   signup,
   login,
   logOut,
+  verifyEmail,
   userActivation,
   forgotPassword,
   resetPassword,

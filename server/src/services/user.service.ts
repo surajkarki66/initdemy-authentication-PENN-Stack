@@ -139,6 +139,17 @@ export const activateUser = async (token: string) => {
       where: {
         id,
       },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })) as IUser;
 
     if (!user) {
@@ -329,6 +340,62 @@ export const changeUserPassword = async (
     })) as IUser;
 
     return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const sendEmailVerification = async (userId: string) => {
+  try {
+    const user = (await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })) as IUser;
+    if (!user) {
+      throw new HttpException(404, "User not found");
+    }
+    if (!user.isActive) {
+      const { id, role, email } = user;
+      const payload = {
+        id,
+        role,
+      };
+
+      const accessToken = signToken(
+        payload,
+        config.jwtExpiresForEmailActivation,
+        config.jwtSecretForEmailActivation
+      );
+
+      const response = await mailGun.messages().send({
+        from: `Initdemy <${config.email}>`,
+        to: `${email}`,
+        subject: `Confirmation email!`,
+        html: `
+                    <h1>Please click the following link to activate your email address!</h1>
+                    <p>${config.url}/user/activate/${accessToken}</p>
+                    <hr />
+                    <p>The verification link will expired after 24 hours.</p>
+                    <p>This email may contain sensitive information</p>
+                    <p>${config.url}</p>
+                `,
+      });
+      return { user, response };
+    } else {
+      throw new HttpException(400, "User is already activated");
+    }
   } catch (error) {
     throw error;
   }
