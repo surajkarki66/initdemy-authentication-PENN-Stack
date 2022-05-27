@@ -250,8 +250,8 @@ const uploadAvatar = async (
     if (!file) {
       throw new HttpException(400, "No image selected.");
     }
-    const filePath = file.path;
 
+    const filePath = file.path;
     const user = await uploadUserAvatar(userId, filePath);
 
     const result = {
