@@ -11,15 +11,19 @@ const onlyOwnerCanDoThis = (
   _res: Response,
   next: NextFunction
 ) => {
-  const userId = req.user.id;
-  if (req.params && req.params.userId === userId) {
-    return next();
-  } else if (req.body.userId && req.body.userId === userId) {
-    return next();
-  } else if (req.params && req.body.userId && req.body.userId === userId) {
-    return next();
-  } else {
-    throw new HttpException(403, "Only owner can do this action");
+  try {
+    const userId = req.user.id;
+    if (req.params && req.params.userId === userId) {
+      return next();
+    } else if (req.body.userId && req.body.userId === userId) {
+      return next();
+    } else if (req.params && req.body.userId && req.body.userId === userId) {
+      return next();
+    } else {
+      throw new HttpException(403, "Only owner can do this action");
+    }
+  } catch (error) {
+    next(error);
   }
 };
 const onlyActiveUserCanDoThisAction = async (
@@ -47,4 +51,36 @@ const onlyActiveUserCanDoThisAction = async (
   }
 };
 
-export { onlyOwnerCanDoThis, onlyActiveUserCanDoThisAction };
+const onlyOwnerAndAdminCanDoThisAction = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.user.id;
+    const role = req.user.role;
+    if ((req.params && req.params.userId === userId) || role === "ADMIN") {
+      return next();
+    } else if (
+      (req.body.userId && req.body.userId === userId) ||
+      role === "ADMIN"
+    ) {
+      return next();
+    } else if (
+      (req.params && req.body.userId && req.body.userId === userId) ||
+      role === "ADMIN"
+    ) {
+      return next();
+    } else {
+      throw new HttpException(403, "Only owner and admin can do this action");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  onlyOwnerCanDoThis,
+  onlyActiveUserCanDoThisAction,
+  onlyOwnerAndAdminCanDoThisAction,
+};

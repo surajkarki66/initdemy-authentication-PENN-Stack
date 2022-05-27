@@ -38,3 +38,8 @@ export interface IChangeEmail {
   email: string;
   userId: string;
 }
+
+export interface IDeleteUser {
+  userId: string;
+  password: string;
+}

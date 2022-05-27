@@ -6,6 +6,7 @@ import showDataValidationResult from "../middlewares/showDataValidationError";
 import {
   onlyOwnerCanDoThis,
   onlyActiveUserCanDoThisAction,
+  onlyOwnerAndAdminCanDoThisAction,
 } from "../middlewares/permissions/userPermissions";
 import { authenticate, permit } from "../middlewares/auth";
 
@@ -93,6 +94,16 @@ export default class UserRoutes {
       upload.single("avatar"),
       userController.uploadAvatar
     );
+    this.router.delete(
+      "/deleteUser",
+      authenticate,
+      permit(["SUBSCRIBER", "ADMIN"]),
+      userValidation("deleteUser"),
+      showDataValidationResult,
+      onlyOwnerAndAdminCanDoThisAction,
+      userController.deleteUser
+    );
+
     this.router.get("/loggedIn", userController.loggedIn);
     this.router.get("/csrf-token", (req, res) => {
       return res.json({ csrfToken: req.csrfToken() });

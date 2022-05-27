@@ -138,6 +138,25 @@ export default function userValidation(method: string): ValidationChain[] {
       ];
     }
 
+    case "deleteUser": {
+      return [
+        body("password", "Password is required")
+          .notEmpty()
+          .isString()
+          .withMessage("Password must be string")
+          .isLength({ min: 6, max: 64 })
+          .withMessage("Password must be greater than 6 ")
+          .matches("[0-9]")
+          .withMessage("Password Must Contain a Number")
+          .matches("[A-Z]")
+          .withMessage("Password Must Contain an Uppercase"),
+        body("userId", "userId is required")
+          .notEmpty()
+          .isString()
+          .withMessage("userId must be string"),
+      ];
+    }
+
     default:
       return [];
   }

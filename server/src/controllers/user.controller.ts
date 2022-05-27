@@ -14,6 +14,7 @@ import {
   sendEmailVerification,
   changeUserEmail,
   uploadUserAvatar,
+  removeUser,
 } from "../services/user.service";
 import {
   IRegisterUserInput,
@@ -24,6 +25,7 @@ import {
   IVerifyEmail,
   IForgotPassword,
   IChangeEmail,
+  IDeleteUser,
 } from "../interfaces/user-inputs";
 import HttpException from "../errors/HttpException";
 import { UserRole } from "@prisma/client";
@@ -272,6 +274,30 @@ const uploadAvatar = async (
   }
 };
 
+const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, password }: IDeleteUser = req.body;
+
+    const deletedUser = await removeUser({ userId, password });
+
+    const result = {
+      status: "success",
+      data: {
+        message: `User deleted successfully!`,
+        deletedUser,
+      },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const logOut: RequestHandler = (
   _req: Request,
   res: Response,
@@ -333,6 +359,7 @@ export default {
   changePassword,
   changeEmail,
   uploadAvatar,
+  deleteUser,
   me,
   loggedIn,
 };

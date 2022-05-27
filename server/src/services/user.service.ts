@@ -12,6 +12,7 @@ import {
   ILoginUserInput,
   IResetPasswordInput,
   IChangePasswordInput,
+  IDeleteUser,
 } from "../interfaces/user-inputs";
 import cloudinary from "../utils/cloudinary";
 
@@ -510,6 +511,34 @@ export const uploadUserAvatar = async (userId: string, filePath: string) => {
       },
     })) as IUser;
     return updatedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const removeUser = async (removeUserInput: IDeleteUser) => {
+  try {
+    const { userId, password } = removeUserInput;
+    const user = (await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    })) as IUser;
+    if (!user) {
+      throw new HttpException(404, "User not found");
+    }
+    const actualPassword = user.password;
+    const match = await comparePassword(password, actualPassword);
+    if (!match) {
+      throw new HttpException(401, "Oops! Password is incorrect");
+    }
+    if (user.cloudinaryId) {
+      await cloudinary.uploader.destroy(user.cloudinaryId);
+    }
+    const deletedUser = (await prisma.user.delete({
+      where: { id: userId },
+    })) as IUser;
+    return deletedUser;
   } catch (error) {
     throw error;
   }
