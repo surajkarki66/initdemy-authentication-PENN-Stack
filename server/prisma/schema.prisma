@@ -17,6 +17,7 @@ model User {
   lastName        String   @db.VarChar(32)
   password        String   @db.VarChar(64)
   avatar          String   
+  cloudinaryId    String   @default("")
   role            UserRole @default(SUBSCRIBER)
   isActive        Boolean  @default(false)
   resetLink       String   @default("")
