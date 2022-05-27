@@ -1,5 +1,7 @@
 import csrf from "csurf";
 import cors from "cors";
+import hpp from "hpp";
+import helmet from "helmet";
 import morgan from "morgan";
 import express from "express";
 import cookieParser from "cookie-parser";
@@ -40,7 +42,8 @@ class Server {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-
+    this.app.use(helmet());
+    this.app.use(hpp());
     this.app.use(this.csrfProtection);
 
     if (config.env === "development") {

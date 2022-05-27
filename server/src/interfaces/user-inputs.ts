@@ -43,3 +43,8 @@ export interface IDeleteUser {
   userId: string;
   password: string;
 }
+
+export interface IChangeUserDetails {
+  firstName: string;
+  lastName: string;
+}

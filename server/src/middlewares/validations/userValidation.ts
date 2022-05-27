@@ -157,6 +157,31 @@ export default function userValidation(method: string): ValidationChain[] {
       ];
     }
 
+    case "changeUserDetails": {
+      return [
+        body("firstName", "First Name is required")
+          .notEmpty()
+          .trim()
+          .isString()
+          .withMessage("First Name must be string")
+          .isLength({
+            min: 2,
+            max: 32,
+          })
+          .withMessage("First Name must be between 3 to 32 characters"),
+        body("lastName", "Last Name is required")
+          .notEmpty()
+          .trim()
+          .isString()
+          .withMessage("Last Name must be string")
+          .isLength({
+            min: 2,
+            max: 32,
+          })
+          .withMessage("Last Name must be between 3 to 32 characters"),
+      ];
+    }
+
     default:
       return [];
   }

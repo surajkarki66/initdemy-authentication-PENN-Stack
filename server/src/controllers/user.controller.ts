@@ -15,6 +15,8 @@ import {
   changeUserEmail,
   uploadUserAvatar,
   removeUser,
+  fetchUserDetails,
+  updateUserDetails,
 } from "../services/user.service";
 import {
   IRegisterUserInput,
@@ -26,6 +28,7 @@ import {
   IForgotPassword,
   IChangeEmail,
   IDeleteUser,
+  IChangeUserDetails,
 } from "../interfaces/user-inputs";
 import HttpException from "../errors/HttpException";
 import { UserRole } from "@prisma/client";
@@ -240,6 +243,35 @@ const changeEmail = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const changeUserDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userDetails: IChangeUserDetails = req.body;
+    const { userId } = req.params;
+
+    const updatedUser = await updateUserDetails(userDetails, userId);
+
+    const result = {
+      status: "success",
+      data: {
+        message: "Changed user details successfully!",
+        updatedUser,
+      },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const uploadAvatar = async (
   req: Request,
   res: Response,
@@ -330,6 +362,26 @@ const me = async (req: Request, res: Response, next: NextFunction) => {
     next(error);
   }
 };
+const getUserDetails = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userId } = req.params;
+    const user = await fetchUserDetails(userId);
+
+    const result = { status: "success", data: user };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
 
 const loggedIn: RequestHandler = async (
   req: Request,
@@ -354,10 +406,12 @@ export default {
   logOut,
   verifyEmail,
   userActivation,
+  getUserDetails,
   forgotPassword,
   resetPassword,
   changePassword,
   changeEmail,
+  changeUserDetails,
   uploadAvatar,
   deleteUser,
   me,

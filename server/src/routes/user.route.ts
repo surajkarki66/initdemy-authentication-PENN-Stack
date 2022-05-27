@@ -39,6 +39,13 @@ export default class UserRoutes {
       permit(["SUBSCRIBER", "ADMIN"]),
       userController.me
     );
+    this.router.get(
+      "/getUserDetails/:userId",
+      authenticate,
+      permit(["SUBSCRIBER", "ADMIN"]),
+      onlyOwnerAndAdminCanDoThisAction,
+      userController.getUserDetails
+    );
     this.router.post(
       "/verifyEmail",
       authenticate,
@@ -85,6 +92,17 @@ export default class UserRoutes {
       onlyOwnerCanDoThis,
       userController.changeEmail
     );
+    this.router.patch(
+      "/changeUserDetails/:userId",
+      authenticate,
+      permit(["SUBSCRIBER", "ADMIN"]),
+      userValidation("changeUserDetails"),
+      showDataValidationResult,
+      onlyActiveUserCanDoThisAction,
+      onlyOwnerCanDoThis,
+      userController.changeUserDetails
+    );
+
     this.router.patch(
       "/uploadAvatar/:userId",
       authenticate,

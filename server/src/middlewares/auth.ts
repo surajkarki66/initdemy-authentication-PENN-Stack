@@ -42,11 +42,15 @@ const authenticate: RequestHandler = async (
 
 const permit = (roles: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const { role } = req.user;
-    if (roles.includes(role)) {
-      next();
-    } else {
-      throw new HttpException(401, `${role} is not allowed`);
+    try {
+      const { role } = req.user;
+      if (roles.includes(role)) {
+        next();
+      } else {
+        throw new HttpException(401, `${role} is not allowed`);
+      }
+    } catch (error) {
+      next(error);
     }
   };
 };

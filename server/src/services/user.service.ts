@@ -13,6 +13,7 @@ import {
   IResetPasswordInput,
   IChangePasswordInput,
   IDeleteUser,
+  IChangeUserDetails,
 } from "../interfaces/user-inputs";
 import cloudinary from "../utils/cloudinary";
 
@@ -539,6 +540,53 @@ export const removeUser = async (removeUserInput: IDeleteUser) => {
       where: { id: userId },
     })) as IUser;
     return deletedUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchUserDetails = async (userId: string) => {
+  try {
+    const user = (await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    })) as IUser;
+    if (!user) {
+      throw new HttpException(404, "User not found");
+    }
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateUserDetails = async (
+  changeUserInput: IChangeUserDetails,
+  userId: string
+) => {
+  try {
+    const updateObject = {
+      ...changeUserInput,
+      updatedAt: new Date(),
+    };
+    const updatedUser = (await prisma.user.update({
+      where: { id: userId },
+      data: updateObject,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        cloudinaryId: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })) as IUser;
+    return updatedUser;
   } catch (error) {
     throw error;
   }
