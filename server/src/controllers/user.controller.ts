@@ -12,10 +12,20 @@ import {
   resetUserPassword,
   changeUserPassword,
   sendEmailVerification,
+  changeUserEmail,
 } from "../services/user.service";
-import { IRegisterUserInput } from "../interfaces/register-user-input";
-import { ILoginUserInput } from "../interfaces/login-user-input";
+import {
+  IRegisterUserInput,
+  ILoginUserInput,
+  IChangePasswordInput,
+  IResetPasswordInput,
+  IUserActivationInput,
+  IVerifyEmail,
+  IForgotPassword,
+  IChangeEmail,
+} from "../interfaces/user-inputs";
 import HttpException from "../errors/HttpException";
+import { UserRole } from "@prisma/client";
 
 const signup: RequestHandler = async (
   req: Request,
@@ -75,7 +85,7 @@ const userActivation = async (
   next: NextFunction
 ) => {
   try {
-    const { token } = req.body;
+    const { token }: IUserActivationInput = req.body;
     const user = await activateUser(token);
     const result = {
       status: "success",
@@ -94,7 +104,7 @@ const userActivation = async (
 
 const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.body;
+    const { userId }: IVerifyEmail = req.body;
     const { user } = await sendEmailVerification(userId);
 
     const result = {
@@ -121,7 +131,7 @@ const forgotPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { email } = req.body;
+    const { email }: IForgotPassword = req.body;
     const { response } = await requestForgotPassword(email);
 
     const result = {
@@ -147,8 +157,8 @@ const resetPassword = async (
   next: NextFunction
 ) => {
   try {
-    const { resetLink, newPassword } = req.body;
-    const updatedUser = await resetUserPassword(resetLink, newPassword);
+    const { resetLink, newPassword }: IResetPasswordInput = req.body;
+    const updatedUser = await resetUserPassword({ resetLink, newPassword });
 
     const result = {
       status: "success",
@@ -173,17 +183,46 @@ const changePassword = async (
   next: NextFunction
 ) => {
   try {
-    const { userId, oldPassword, newPassword } = req.body;
-    const updatedUser = await changeUserPassword(
+    const { userId, oldPassword, newPassword }: IChangePasswordInput = req.body;
+    const updatedUser = await changeUserPassword({
       oldPassword,
       newPassword,
-      userId
-    );
+      userId,
+    });
 
     const result = {
       status: "success",
       data: {
         message: "Password has been changed successfully.",
+        user: updatedUser,
+      },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const changeEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = req.user;
+    const role = user.role as UserRole;
+    const { email, userId }: IChangeEmail = req.body;
+
+    const { response, updatedUser } = await changeUserEmail(
+      email,
+      userId,
+      role
+    );
+    const result = {
+      status: "success",
+      data: {
+        message: `Activation email is sent! Please check your email. ${response.message}`,
         user: updatedUser,
       },
     };
@@ -257,6 +296,7 @@ export default {
   forgotPassword,
   resetPassword,
   changePassword,
+  changeEmail,
   me,
   loggedIn,
 };

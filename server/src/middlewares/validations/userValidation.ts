@@ -125,6 +125,18 @@ export default function userValidation(method: string): ValidationChain[] {
           .withMessage("userId must be string"),
       ];
     }
+    case "changeEmail": {
+      return [
+        body("email", "Email is required")
+          .notEmpty()
+          .isEmail()
+          .withMessage("Must be a valid email address"),
+        body("userId", "userId is required")
+          .notEmpty()
+          .isString()
+          .withMessage("userId must be string"),
+      ];
+    }
 
     default:
       return [];

@@ -72,6 +72,16 @@ export default class UserRoutes {
       onlyOwnerCanDoThis,
       userController.changePassword
     );
+    this.router.patch(
+      "/changeEmail",
+      authenticate,
+      permit(["SUBSCRIBER", "ADMIN"]),
+      userValidation("changeEmail"),
+      showDataValidationResult,
+      onlyActiveUserCanDoThisAction,
+      onlyOwnerCanDoThis,
+      userController.changeEmail
+    );
     this.router.get("/loggedIn", userController.loggedIn);
     this.router.get("/csrf-token", (req, res) => {
       return res.json({ csrfToken: req.csrfToken() });

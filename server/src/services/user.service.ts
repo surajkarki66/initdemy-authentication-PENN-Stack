@@ -1,14 +1,18 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 
 import mailGun from "../configs/mailgun";
 import config from "../configs/config";
 import HttpException from "../errors/HttpException";
 import { IUser } from "../interfaces/user";
-import { comparePassword, hashPassword } from "../utils/auth";
-import { IRegisterUserInput } from "../interfaces/register-user-input";
-import { ILoginUserInput } from "../interfaces/login-user-input";
 import { signToken, verifyToken } from "../helpers/jwtHelper";
 import { ITokenPayload } from "../helpers/types/ITokenPayload";
+import { comparePassword, hashPassword } from "../utils/auth";
+import {
+  IRegisterUserInput,
+  ILoginUserInput,
+  IResetPasswordInput,
+  IChangePasswordInput,
+} from "../interfaces/user-inputs";
 
 const prisma = new PrismaClient();
 
@@ -249,10 +253,10 @@ export const requestForgotPassword = async (email: string) => {
 };
 
 export const resetUserPassword = async (
-  resetLink: string,
-  newPassword: string
+  resetPasswordInput: IResetPasswordInput
 ) => {
   try {
+    const { resetLink, newPassword } = resetPasswordInput;
     const response = await verifyToken({
       token: resetLink,
       secretKey: config.jwtSecretForForgotPassword,
@@ -301,10 +305,9 @@ export const resetUserPassword = async (
 };
 
 export const changeUserPassword = async (
-  oldPassword: string,
-  newPassword: string,
-  userId: string
+  changePasswordInput: IChangePasswordInput
 ) => {
+  const { userId, oldPassword, newPassword } = changePasswordInput;
   try {
     const user = (await prisma.user.findUnique({
       where: {
@@ -399,4 +402,63 @@ export const sendEmailVerification = async (userId: string) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const changeUserEmail = async (
+  email: string,
+  userId: string,
+  role: UserRole
+) => {
+  const user = await getUserByEmail(email);
+
+  if (user && user.id !== userId) {
+    throw new HttpException(409, "Email is already taken!");
+  }
+  const updateObject = {
+    email: email,
+    isActive: false,
+    updatedAt: new Date(),
+  };
+
+  const updatedUser = (await prisma.user.update({
+    where: { id: userId },
+    data: updateObject,
+    select: {
+      id: true,
+      email: true,
+      firstName: true,
+      lastName: true,
+      avatar: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  })) as IUser;
+
+  const payload = {
+    id: userId,
+    role,
+  };
+
+  const accessToken = signToken(
+    payload,
+    config.jwtExpiresForEmailActivation,
+    config.jwtSecretForEmailActivation
+  );
+
+  const response = await mailGun.messages().send({
+    from: `Initdemy <${config.email}>`,
+    to: `${email}`,
+    subject: `Confirmation email!`,
+    html: `
+                    <h1>Please click the following link to activate your email address!</h1>
+                    <p>${config.url}/user/activate/${accessToken}</p>
+                    <hr />
+                    <p>The verification link will expired after 24 hours.</p>
+                    <p>This email may contain sensitive information</p>
+                    <p>${config.url}</p>
+                `,
+  });
+  return { updatedUser, response };
 };
