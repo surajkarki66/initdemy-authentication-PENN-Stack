@@ -7,6 +7,7 @@ export interface IUser {
   lastName: string;
   password: string;
   avatar: string;
+  cloudinaryId: string;
   role: UserRole;
   isActive: boolean;
   resetLink: string;

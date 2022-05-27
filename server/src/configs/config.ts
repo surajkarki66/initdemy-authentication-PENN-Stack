@@ -32,6 +32,10 @@ const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN;
 const MAILGUN_PRIVATE_API_KEY = process.env.MAILGUN_PRIVATE_API_KEY;
 const EMAIL = process.env.EMAIL;
 
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
+
 const config = {
   server: SERVER,
   env: NODE_ENV,
@@ -46,6 +50,9 @@ const config = {
   mailgunDomain: MAILGUN_DOMAIN,
   mailgunPrivateAPIKey: MAILGUN_PRIVATE_API_KEY,
   email: EMAIL,
+  cloudinaryCloudName: CLOUDINARY_CLOUD_NAME,
+  cloudinaryApiKey: CLOUDINARY_API_KEY,
+  cloudinaryApiSecret: CLOUDINARY_API_SECRET,
 };
 
 export default config;

@@ -13,6 +13,7 @@ import {
   IResetPasswordInput,
   IChangePasswordInput,
 } from "../interfaces/user-inputs";
+import cloudinary from "../utils/cloudinary";
 
 const prisma = new PrismaClient();
 
@@ -118,6 +119,7 @@ export const getCurrentUser = async (id: string) => {
         firstName: true,
         lastName: true,
         avatar: true,
+        cloudinaryId: true,
         role: true,
         isActive: true,
         createdAt: true,
@@ -149,6 +151,7 @@ export const activateUser = async (token: string) => {
         firstName: true,
         lastName: true,
         avatar: true,
+        cloudinaryId: true,
         role: true,
         isActive: true,
         createdAt: true,
@@ -179,6 +182,7 @@ export const activateUser = async (token: string) => {
           firstName: true,
           lastName: true,
           avatar: true,
+          cloudinaryId: true,
           role: true,
           isActive: true,
           createdAt: true,
@@ -222,6 +226,7 @@ export const requestForgotPassword = async (email: string) => {
           firstName: true,
           lastName: true,
           avatar: true,
+          cloudinaryId: true,
           role: true,
           isActive: true,
           createdAt: true,
@@ -291,6 +296,7 @@ export const resetUserPassword = async (
         firstName: true,
         lastName: true,
         avatar: true,
+        cloudinaryId: true,
         role: true,
         isActive: true,
         createdAt: true,
@@ -335,6 +341,7 @@ export const changeUserPassword = async (
         firstName: true,
         lastName: true,
         avatar: true,
+        cloudinaryId: true,
         role: true,
         isActive: true,
         createdAt: true,
@@ -360,6 +367,7 @@ export const sendEmailVerification = async (userId: string) => {
         firstName: true,
         lastName: true,
         avatar: true,
+        cloudinaryId: true,
         role: true,
         isActive: true,
         createdAt: true,
@@ -409,49 +417,51 @@ export const changeUserEmail = async (
   userId: string,
   role: UserRole
 ) => {
-  const user = await getUserByEmail(email);
+  try {
+    const user = await getUserByEmail(email);
 
-  if (user && user.id !== userId) {
-    throw new HttpException(409, "Email is already taken!");
-  }
-  const updateObject = {
-    email: email,
-    isActive: false,
-    updatedAt: new Date(),
-  };
+    if (user && user.id !== userId) {
+      throw new HttpException(409, "Email is already taken!");
+    }
+    const updateObject = {
+      email: email,
+      isActive: false,
+      updatedAt: new Date(),
+    };
 
-  const updatedUser = (await prisma.user.update({
-    where: { id: userId },
-    data: updateObject,
-    select: {
-      id: true,
-      email: true,
-      firstName: true,
-      lastName: true,
-      avatar: true,
-      role: true,
-      isActive: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  })) as IUser;
+    const updatedUser = (await prisma.user.update({
+      where: { id: userId },
+      data: updateObject,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        cloudinaryId: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })) as IUser;
 
-  const payload = {
-    id: userId,
-    role,
-  };
+    const payload = {
+      id: userId,
+      role,
+    };
 
-  const accessToken = signToken(
-    payload,
-    config.jwtExpiresForEmailActivation,
-    config.jwtSecretForEmailActivation
-  );
+    const accessToken = signToken(
+      payload,
+      config.jwtExpiresForEmailActivation,
+      config.jwtSecretForEmailActivation
+    );
 
-  const response = await mailGun.messages().send({
-    from: `Initdemy <${config.email}>`,
-    to: `${email}`,
-    subject: `Confirmation email!`,
-    html: `
+    const response = await mailGun.messages().send({
+      from: `Initdemy <${config.email}>`,
+      to: `${email}`,
+      subject: `Confirmation email!`,
+      html: `
                     <h1>Please click the following link to activate your email address!</h1>
                     <p>${config.url}/user/activate/${accessToken}</p>
                     <hr />
@@ -459,6 +469,48 @@ export const changeUserEmail = async (
                     <p>This email may contain sensitive information</p>
                     <p>${config.url}</p>
                 `,
-  });
-  return { updatedUser, response };
+    });
+    return { updatedUser, response };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const uploadUserAvatar = async (userId: string, filePath: string) => {
+  try {
+    const user = (await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    })) as IUser;
+    if (user.cloudinaryId) {
+      await cloudinary.uploader.destroy(user.cloudinaryId);
+    }
+    const result = await cloudinary.uploader.upload(filePath);
+    const updateObject = {
+      avatar: result?.secure_url || user.avatar,
+      cloudinaryId: result?.public_id || user.cloudinaryId,
+      updatedAt: new Date(),
+    };
+
+    const updatedUser = (await prisma.user.update({
+      where: { id: userId },
+      data: updateObject,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        role: true,
+        cloudinaryId: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    })) as IUser;
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
 };

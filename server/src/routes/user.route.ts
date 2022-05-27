@@ -9,6 +9,8 @@ import {
 } from "../middlewares/permissions/userPermissions";
 import { authenticate, permit } from "../middlewares/auth";
 
+import upload from "../utils/multer";
+
 export default class UserRoutes {
   router: Router;
 
@@ -81,6 +83,15 @@ export default class UserRoutes {
       onlyActiveUserCanDoThisAction,
       onlyOwnerCanDoThis,
       userController.changeEmail
+    );
+    this.router.patch(
+      "/uploadAvatar/:userId",
+      authenticate,
+      permit(["SUBSCRIBER", "ADMIN"]),
+      onlyActiveUserCanDoThisAction,
+      onlyOwnerCanDoThis,
+      upload.single("avatar"),
+      userController.uploadAvatar
     );
     this.router.get("/loggedIn", userController.loggedIn);
     this.router.get("/csrf-token", (req, res) => {

@@ -13,6 +13,7 @@ import {
   changeUserPassword,
   sendEmailVerification,
   changeUserEmail,
+  uploadUserAvatar,
 } from "../services/user.service";
 import {
   IRegisterUserInput,
@@ -237,6 +238,40 @@ const changeEmail = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const uploadAvatar = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const file = req.file;
+    const { userId } = req.params;
+
+    if (!file) {
+      throw new HttpException(400, "No image selected.");
+    }
+    const filePath = file.path;
+
+    const user = await uploadUserAvatar(userId, filePath);
+
+    const result = {
+      status: "success",
+      data: {
+        message: `Avatar uploaded successfully`,
+        user,
+      },
+    };
+    const serverResponse = {
+      result: result,
+      statusCode: 200,
+      contentType: "application/json",
+    };
+    return writeServerResponse(res, serverResponse);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const logOut: RequestHandler = (
   _req: Request,
   res: Response,
@@ -297,6 +332,7 @@ export default {
   resetPassword,
   changePassword,
   changeEmail,
+  uploadAvatar,
   me,
   loggedIn,
 };
