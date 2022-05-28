@@ -2,6 +2,8 @@
 
 ## Get Started
 
+This is a boilerplate of authentication system which is built using Express.js in backend and Next.js in frontend.
+
 ## First steps
 
 - Make sure to have TSLint installed and set as default formatter
@@ -44,7 +46,7 @@ CLOUDINARY_API_SECRET=<Add-cloudinary-api-secret>
 - Run `Runs seed scripts
   Runs seed scripts
 - Run `npx prisma generate` or `yarn prisma generate` from the server folder to establish link between schema.prisma and .env file
-- Run `npx prisma db push` or `yarn prisma db push` to create create a new migrate (to sync database schema to prisma schema)
+- Run `npx prisma db push` or `yarn prisma db push` to create a new migrate (to sync database schema to prisma schema)
 
 ## Viewing the database data and tables
 
