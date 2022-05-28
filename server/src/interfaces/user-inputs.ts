@@ -23,7 +23,7 @@ export interface IChangePasswordInput {
 }
 
 export interface IUserActivationInput {
-  token: string;
+  accessToken: string;
 }
 
 export interface IVerifyEmail {

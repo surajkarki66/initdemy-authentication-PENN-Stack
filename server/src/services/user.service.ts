@@ -135,10 +135,10 @@ export const getCurrentUser = async (id: string) => {
   }
 };
 
-export const activateUser = async (token: string) => {
+export const activateUser = async (accessToken: string) => {
   try {
     const response = await verifyToken({
-      token,
+      accessToken,
       secretKey: config.jwtSecretForEmailActivation,
     });
 
@@ -265,7 +265,7 @@ export const resetUserPassword = async (
   try {
     const { resetLink, newPassword } = resetPasswordInput;
     const response = await verifyToken({
-      token: resetLink,
+      accessToken: resetLink,
       secretKey: config.jwtSecretForForgotPassword,
     });
 

@@ -60,7 +60,7 @@ export default function userValidation(method: string): ValidationChain[] {
 
     case "userActivation": {
       return [
-        body("token", "Token is required")
+        body("accessToken", "accessToken is required")
           .notEmpty()
           .isJWT()
           .withMessage("Must be a valid jwt"),

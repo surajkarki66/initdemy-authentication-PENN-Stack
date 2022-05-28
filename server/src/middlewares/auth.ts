@@ -20,7 +20,7 @@ const authenticate: RequestHandler = async (
         );
       } else {
         const response = await verifyToken({
-          token: authorization[1],
+          accessToken: authorization[1],
           secretKey: String(config.jwtSecret),
         });
 

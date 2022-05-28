@@ -91,8 +91,8 @@ const userActivation = async (
   next: NextFunction
 ) => {
   try {
-    const { token }: IUserActivationInput = req.body;
-    const user = await activateUser(token);
+    const { accessToken }: IUserActivationInput = req.body;
+    const user = await activateUser(accessToken);
     const result = {
       status: "success",
       data: { message: "user successfully activated", user },
@@ -335,7 +335,7 @@ const logOut: RequestHandler = (
   res: Response,
   _next: NextFunction
 ) => {
-  res.clearCookie("token");
+  res.clearCookie("accessToken");
   const serverResponse = {
     result: { message: "Signout success" },
     statusCode: 200,
@@ -389,12 +389,15 @@ const loggedIn: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const token = req.cookies.token;
-    if (!token) {
-      throw new HttpException(404, "Token not found");
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
+      throw new HttpException(404, "Access token not found");
     }
-    await verifyToken({ token, secretKey: config.jwtSecret });
-    res.send(token);
+    await verifyToken({
+      accessToken: accessToken,
+      secretKey: config.jwtSecret,
+    });
+    res.send(accessToken);
   } catch (err) {
     next(err);
   }

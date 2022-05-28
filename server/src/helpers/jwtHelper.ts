@@ -15,13 +15,13 @@ const signToken = (
   return jwt.sign(payload, secret, options);
 };
 const verifyToken = async ({
-  token,
+  accessToken,
   secretKey,
 }: {
-  token: string;
+  accessToken: string;
   secretKey: string | undefined;
 }) => {
-  return jwt.verify(token, String(secretKey), (error, response) => {
+  return jwt.verify(accessToken, String(secretKey), (error, response) => {
     if (error) {
       if (String(error).startsWith("TokenExpiredError")) {
         return { error: "Expired link. Signup again." };
