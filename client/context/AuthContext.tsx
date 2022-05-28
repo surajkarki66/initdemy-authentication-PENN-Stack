@@ -41,18 +41,18 @@ const rootReducer = (
 const AuthContextProvider: FC<Props> = (props) => {
   const [state, dispatch] = useReducer(rootReducer, initialState);
   const [csrfToken, setCsrfToken] = useState("");
-  const [accessToken, setAccessToken] = useState(Cookie.get("token"));
+  const [accessToken, setAccessToken] = useState(Cookie.get("accessToken"));
   const router = useRouter();
 
   const getTokens = useCallback(async () => {
-    const { data } = await Axios.get("/user/loggedIn");
-    setAccessToken(data);
+    const csrfResponse = await Axios.get("/user/csrf-token");
+    setCsrfToken(csrfResponse.data.csrfToken);
     dispatch({
       type: "LOGIN",
       payload: JSON.parse(String(localStorage.getItem("user"))),
     });
-    const csrfResponse = await Axios.get("/user/csrf-token");
-    setCsrfToken(csrfResponse.data.csrfToken);
+    const { data } = await Axios.get("/user/loggedIn");
+    setAccessToken(data);
   }, []);
 
   useEffect(() => {

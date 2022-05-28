@@ -13,7 +13,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <AuthContextProvider>
       <ToastContainer position="top-center" />
       <TopNav />
-      <Component {...pageProps} />;
+      <Component {...pageProps} />
     </AuthContextProvider>
   );
 }

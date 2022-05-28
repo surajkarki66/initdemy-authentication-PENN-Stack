@@ -7,6 +7,9 @@ const UserNav: FC = () => {
       <Link href="/user">
         <a className="nav-link activate">Dashboard</a>
       </Link>
+      <Link href="/accountSettings">
+        <a className="nav-link activate">Account Settings</a>
+      </Link>
     </div>
   );
 };
