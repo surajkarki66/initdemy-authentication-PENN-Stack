@@ -7,7 +7,7 @@ This is a boilerplate of authentication system which is built using Express.js i
 ## First steps
 
 - Make sure to have TSLint installed and set as default formatter
-- Run `yarn i` or `npm i` inside the server folder before starting the server.
+- Run `yarn install` or `npm i` inside the server folder before starting the server.
 - create .env file. See example below.
 
 ```
@@ -37,7 +37,7 @@ CLOUDINARY_API_SECRET=<Add-cloudinary-api-secret>
 ## Running the server
 
 - to run the development server, do `yarn run dev` or `npm run dev`
-- to run the production server, do `yarn start` or `npm start`
+- to run the production server, do `yarn run build` or `npm run build` and `yarn start` or `npm start`
 
 ## Setting up and running the database
 
@@ -74,7 +74,7 @@ CLOUDINARY_API_SECRET=<Add-cloudinary-api-secret>
 ## Steps
 
 - Make sure to have ESLint installed and set as default formatter
-- Run `yarn i` or `npm i` inside the client folder before starting the server.
+- Run `yarn install ` or `npm i` inside the client folder before starting the server.
 - create .env.local file. See example below.
 
 ```
