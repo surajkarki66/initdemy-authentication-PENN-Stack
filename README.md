@@ -2,7 +2,7 @@
 
 ## Get Started
 
-This is a boilerplate of authentication system which is built using Express.js in backend and Next.js in frontend.
+This is a boilerplate of authentication system for initdemy which is a online education marketplace which is built using Express.js in backend and Next.js in frontend.
 
 ## First steps
 
