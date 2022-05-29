@@ -32,6 +32,8 @@ CLOUDINARY_CLOUD_NAME=<Add-cloudinary-name>
 CLOUDINARY_API_KEY=<Add-cloudinary-api-key>
 CLOUDINARY_API_SECRET=<Add-cloudinary-api-secret>
 
+DATABASE_URL="postgresql://<username>:<password>@<host>:<port>/initdemy?schema=public"
+
 ```
 
 ## Running the server
