@@ -1,6 +1,6 @@
 export type UserRole = "SUBSCRIBER" | "ADMIN";
 
-export type IUser = {
+export type User = {
   id: string;
   email: string;
   firstName: string;
@@ -30,4 +30,17 @@ export type TokenPayload = {
   iat: number;
   exp: number;
   error: string;
+};
+
+export type UserProps = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  avatar: string;
+  cloudinaryId: string;
+  role: UserRole;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 };

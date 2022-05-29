@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/router";
 
 import Axios from "../axios-url";
-import { AuthContextType, IUser } from "../types/types";
+import { AuthContextType, User } from "../types/types";
 
 type Props = {
   children: ReactFragment;
@@ -24,7 +24,7 @@ const initialState = {
 const AuthContext = createContext({} as AuthContextType);
 
 const rootReducer = (
-  state: { user: IUser },
+  state: { user: User },
   action: { type: any; payload?: any }
 ) => {
   switch (action.type) {

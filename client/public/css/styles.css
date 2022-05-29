@@ -6,3 +6,13 @@
   background-image: linear-gradient(to right, #007bff, #000);
   color: #fff;
 }
+
+.profileContainer {
+  display: flex;
+  margin: 20px;
+}
+@media only screen and (max-width: 768px) {
+  .profileContainer {
+    flex-direction: column-reverse;
+  }
+}

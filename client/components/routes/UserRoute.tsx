@@ -5,6 +5,7 @@ import {
   useCallback,
   ReactChild,
   FC,
+  ReactFragment,
 } from "react";
 import { useRouter } from "next/router";
 import { SyncOutlined } from "@ant-design/icons";
@@ -13,7 +14,7 @@ import Axios from "../../axios-url";
 import { AuthContext } from "../../context/AuthContext";
 import UserNav from "../nav/UserNav";
 
-type Props = { children: ReactChild };
+type Props = { children: ReactFragment };
 
 const UserRoute: FC<Props> = (props) => {
   const [ok, setOk] = useState(false);
