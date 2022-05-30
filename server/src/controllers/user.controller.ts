@@ -390,9 +390,6 @@ const loggedIn: RequestHandler = async (
 ) => {
   try {
     const accessToken = req.cookies.accessToken;
-    if (!accessToken) {
-      throw new HttpException(404, "Access token not found");
-    }
     await verifyToken({
       accessToken: accessToken,
       secretKey: config.jwtSecret,

@@ -86,6 +86,12 @@ const Login: NextPage = () => {
             <a>Register</a>
           </Link>
         </p>
+        <p className="text-center">
+          Did you forgot your password?{" "}
+          <Link href="/user/forgot-password">
+            <a>Forgot password</a>
+          </Link>
+        </p>
       </div>
     </>
   );
