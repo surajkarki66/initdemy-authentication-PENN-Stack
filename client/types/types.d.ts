@@ -47,5 +47,6 @@ export type UserProps = {
 export type ProfileProps = {
   user: UserProps;
   loading: boolean;
+  disableBtn: boolean;
   profileActivateHandler: (e: SyntheticEvent) => Promise<void>;
 };

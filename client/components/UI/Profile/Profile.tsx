@@ -9,6 +9,7 @@ import { SyncOutlined } from "@ant-design/icons";
 const Profile: React.FC<ProfileProps> = ({
   user,
   loading,
+  disableBtn,
   profileActivateHandler,
 }) => {
   return (
@@ -55,7 +56,11 @@ const Profile: React.FC<ProfileProps> = ({
           {!user.isActive && (
             <div style={{ fontStyle: "italic", marginTop: "30px" }}>
               <h6>Account is not activated yet</h6>
-              <Button type="primary" onClick={(e) => profileActivateHandler(e)}>
+              <Button
+                type="primary"
+                onClick={(e) => profileActivateHandler(e)}
+                disabled={disableBtn}
+              >
                 {loading ? <SyncOutlined spin /> : "Activate"}
               </Button>
             </div>

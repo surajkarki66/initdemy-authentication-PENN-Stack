@@ -20,6 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 const UserIndex: NextPage<UserProps> = (props) => {
   const [loading, setLoading] = useState(false);
+  const [disableBtn, setDisableBtn] = useState(false);
 
   const { state, csrfToken, accessToken } = useContext(AuthContext);
   const { user } = state;
@@ -40,9 +41,11 @@ const UserIndex: NextPage<UserProps> = (props) => {
       );
       setLoading(false);
       toast(data.data.message);
+      setDisableBtn(true);
     } catch (error: any) {
       setLoading(false);
       toast(error.response.data.data.error);
+      setDisableBtn(false);
     }
   };
   return (
@@ -56,6 +59,7 @@ const UserIndex: NextPage<UserProps> = (props) => {
           <Profile
             user={props}
             loading={loading}
+            disableBtn={disableBtn}
             profileActivateHandler={activate}
           />
         </div>
