@@ -14,7 +14,7 @@ export type User = {
 };
 
 export type AuthContextType = {
-  state: { user: IUser };
+  state: { user: User };
   csrfToken: string;
   accessToken: string | undefined;
   setAccessToken: Dispatch<SetStateAction<string | undefined>>;
@@ -43,4 +43,9 @@ export type UserProps = {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+};
+export type ProfileProps = {
+  user: UserProps;
+  loading: boolean;
+  profileActivateHandler: (e: SyntheticEvent) => Promise<void>;
 };

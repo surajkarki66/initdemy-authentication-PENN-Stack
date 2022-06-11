@@ -1,11 +1,16 @@
 import React from "react";
 import Image from "next/image";
-import { Row, Col } from "antd";
+import { Row, Col, Button } from "antd";
 import moment from "moment";
 
-import { UserProps } from "../../../types/types";
+import { ProfileProps } from "../../../types/types";
+import { SyncOutlined } from "@ant-design/icons";
 
-const Profile: React.FC<UserProps> = (props) => {
+const Profile: React.FC<ProfileProps> = ({
+  user,
+  loading,
+  profileActivateHandler,
+}) => {
   return (
     <div>
       <Row className="profileContainer">
@@ -19,33 +24,42 @@ const Profile: React.FC<UserProps> = (props) => {
           <Image
             width={100}
             height={100}
-            src={props.avatar}
-            alt={props.firstName + " " + props.lastName}
+            src={user.avatar}
+            alt={user.firstName + " " + user.lastName}
           />
         </Col>
 
         <Col md={6} style={{ marginLeft: "5%" }}>
           <h6>
-            First Name: <b>{props.firstName}</b>{" "}
+            First Name: <b>{user.firstName}</b>{" "}
           </h6>
           <h6>
-            Last Name: <b>{props.lastName}</b>{" "}
+            Last Name: <b>{user.lastName}</b>{" "}
           </h6>
           <h6>
-            Email: <b>{props.email}</b>{" "}
+            Email: <b>{user.email}</b>{" "}
           </h6>
           <h6>
-            User Type:<b>{props.isActive ? "Active" : "Not Active"}</b>{" "}
+            User Type:<b>{user.isActive ? "Active" : "Not Active"}</b>{" "}
           </h6>
           <h6>
-            Role:<b>{props.role}</b>{" "}
+            Role:<b>{user.role}</b>{" "}
           </h6>
           <h6>
             Joined:
             <b>
-              {moment(props.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+              {moment(user.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
             </b>{" "}
           </h6>
+
+          {!user.isActive && (
+            <div style={{ fontStyle: "italic", marginTop: "30px" }}>
+              <h6>Account is not activated yet</h6>
+              <Button type="primary" onClick={(e) => profileActivateHandler(e)}>
+                {loading ? <SyncOutlined spin /> : "Activate"}
+              </Button>
+            </div>
+          )}
         </Col>
       </Row>
     </div>
