@@ -4,7 +4,7 @@ import { SyntheticEvent, useContext, useState } from "react";
 import Axios from "../../axios-url";
 import Profile from "../../components/UI/Profile/Profile";
 import UserRoute from "../../components/routes/UserRoute";
-import { UserProps } from "../../types/types";
+import { User } from "../../types/types";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 
@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: data.data,
   };
 };
-const UserIndex: NextPage<UserProps> = (props) => {
+const UserIndex: NextPage<User> = (props) => {
   const [loading, setLoading] = useState(false);
   const [disableBtn, setDisableBtn] = useState(false);
 

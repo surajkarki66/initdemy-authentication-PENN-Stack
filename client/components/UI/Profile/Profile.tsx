@@ -1,10 +1,10 @@
 import React from "react";
-import Image from "next/image";
 import { Row, Col, Button } from "antd";
 import moment from "moment";
 
 import { ProfileProps } from "../../../types/types";
 import { SyncOutlined } from "@ant-design/icons";
+import ProfilePic from "./Avatar/ProfilePic";
 
 const Profile: React.FC<ProfileProps> = ({
   user,
@@ -15,21 +15,6 @@ const Profile: React.FC<ProfileProps> = ({
   return (
     <div>
       <Row className="profileContainer">
-        <Col
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Image
-            width={100}
-            height={100}
-            src={user.avatar}
-            alt={user.firstName + " " + user.lastName}
-          />
-        </Col>
-
         <Col md={6} style={{ marginLeft: "5%" }}>
           <h6>
             First Name: <b>{user.firstName}</b>{" "}
@@ -65,6 +50,9 @@ const Profile: React.FC<ProfileProps> = ({
               </Button>
             </div>
           )}
+        </Col>
+        <Col style={{ marginLeft: "12%" }}>
+          <ProfilePic user={user} />
         </Col>
       </Row>
     </div>

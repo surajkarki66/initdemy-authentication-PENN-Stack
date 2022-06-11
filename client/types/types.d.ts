@@ -32,21 +32,13 @@ export type TokenPayload = {
   error: string;
 };
 
-export type UserProps = {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  avatar: string;
-  cloudinaryId: string;
-  role: UserRole;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-};
 export type ProfileProps = {
-  user: UserProps;
+  user: User;
   loading: boolean;
   disableBtn: boolean;
   profileActivateHandler: (e: SyntheticEvent) => Promise<void>;
+};
+
+export type ProfilePicProps = {
+  user: User;
 };
