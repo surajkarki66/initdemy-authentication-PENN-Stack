@@ -21,6 +21,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const UserIndex: NextPage<User> = (props) => {
   const [loading, setLoading] = useState(false);
   const [disableBtn, setDisableBtn] = useState(false);
+  const [avatar, setAvatar] = useState(props.avatar);
 
   const { state, csrfToken, accessToken } = useContext(AuthContext);
   const { user } = state;
@@ -58,6 +59,8 @@ const UserIndex: NextPage<User> = (props) => {
         <div>
           <Profile
             user={props}
+            avatar={avatar}
+            setAvatar={setAvatar}
             loading={loading}
             disableBtn={disableBtn}
             profileActivateHandler={activate}

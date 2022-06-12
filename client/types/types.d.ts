@@ -34,6 +34,8 @@ export type TokenPayload = {
 
 export type ProfileProps = {
   user: User;
+  avatar: string;
+  setAvatar: Dispatch<SetStateAction<string>>;
   loading: boolean;
   disableBtn: boolean;
   profileActivateHandler: (e: SyntheticEvent) => Promise<void>;
@@ -41,4 +43,5 @@ export type ProfileProps = {
 
 export type ProfilePicProps = {
   user: User;
+  avatar: string;
 };

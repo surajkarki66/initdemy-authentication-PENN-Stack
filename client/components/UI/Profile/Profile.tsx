@@ -5,9 +5,12 @@ import moment from "moment";
 import { ProfileProps } from "../../../types/types";
 import { SyncOutlined } from "@ant-design/icons";
 import ProfilePic from "./Avatar/ProfilePic";
+import ProfilePicChanger from "../../ProfilePicChanger";
 
 const Profile: React.FC<ProfileProps> = ({
   user,
+  avatar,
+  setAvatar,
   loading,
   disableBtn,
   profileActivateHandler,
@@ -52,7 +55,10 @@ const Profile: React.FC<ProfileProps> = ({
           )}
         </Col>
         <Col style={{ marginLeft: "12%" }}>
-          <ProfilePic user={user} />
+          <ProfilePic user={user} avatar={avatar} />
+          <br />
+          <br />
+          <ProfilePicChanger setAvatar={setAvatar} />
         </Col>
       </Row>
     </div>
